@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 from PIL import Image
 import dash_table
 import copy
-from flask_caching import Cache
 import itertools 
 from io import BytesIO
 import base64

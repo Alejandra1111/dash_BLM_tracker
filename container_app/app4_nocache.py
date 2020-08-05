@@ -118,7 +118,8 @@ def input_container_children(
 	    		clearable = False,
 	    		style = {'min-width': '150px'}),
 			dcc.Dropdown(id='picked_version',
-	    		options = [{'label': 'Version 1', 'value': 1}],
+	    		options = [{'label': 'Version ' + str(i+1), 'value': i+1}
+	    		 for i, ver in enumerate(cities_all)],
 	    		value = picked_version,
 	    		clearable = False),
 			html.Label('Select Date:', 
@@ -193,7 +194,7 @@ app.layout = html.Div(
 )
 
 
-
+# update selected tabs  
 @app.callback(Output('tabs-content', 'children'),
               [Input('tabs', 'value')])
 def render_content(tab):
@@ -253,6 +254,84 @@ def render_content(tab):
         ])
 
 
+# update options for picked_hour 
+@app.callback(
+	Output('picked_hour','options'),
+	[Input('picked_datetime', 'date')]
+	)
+def set_hour_to_max(date):
+	max_hour = latest_datatime_hour+1 if date == str(latest_datatime_d_dt) else 24
+	return [{'label': str(h) + ':00', 'value':h} for h in range(max_hour)]
+
+
+# update timespan lists
+for item_id in ['topwords_timespan', 'topusers_timespan', 'toptweets_timespan']:
+	@app.callback(
+		Output(item_id,'options'),
+		[Input('picked_datetime', 'date')]
+		)
+	def update_topwords_timespan(date):
+		return list_timespan if date == str(latest_datatime_d_dt) else list_timespan1
+
+# @app.callback(
+# 	Output('topusers_timespan','options'),
+# 	[Input('picked_datetime', 'date')]
+# 	)
+# def update_topusers_timespan(date):
+# 	return list_timespan if date == str(latest_datatime_d_dt) else list_timespan1
+
+# @app.callback(
+# 	Output('toptweets_timespan','options'),
+# 	[Input('picked_datetime', 'date')]
+# 	)
+# def update_topusers_timespan(date):
+# 	return list_timespan if date == str(latest_datatime_d_dt) else list_timespan1
+
+
+# show/hide a version for all cities random sample 
+@app.callback(
+	[Output('picked_city_extended','children'),
+	Output('picked_version', 'style')],
+	[Input('picked_city', 'value'),
+	Input('picked_version','value')]
+	)
+def city_extended(city, version):
+	if city=='all':
+		city_extended = city + '_v' + str(version) 
+		return [city_extended, {'min-width': '100px'}]
+	else:
+		return [city, {'display': 'none'}]
+
+
+
+# generate a note for the usuer on what the app is doing
+@app.callback(
+	Output('note_filter','children'),
+	[Input('filter_keyword','value'),
+	 Input('filter_submit', 'n_clicks'),
+	 Input('picked_city','value'),
+	 Input('picked_version','value'),
+	 Input('picked_datetime','date')]
+	)
+def update_note_filter(filter_keyword, n_clicks, city, version, date):
+	context = dash.callback_context.triggered[0]['prop_id'].split('.')[0]
+	if context =='': return None
+	print('updating note by trigger', context) 
+
+	if context=='filter_keyword':
+		str1 = 'Please note: filtering data <b>will take some time</b>. Press <b>"Filter"</b> to proceed.'
+	elif context=='filter_submit':
+		str1 = '<b>Please wait</b>: app is accessing <b>raw data</b>, filtering, and re-calculating statistics... This takes time.'
+	else:
+		str1 = '<b>Please wait</b>: app is loading statistics...'
+	return [html.Iframe(srcDoc=str1, sandbox='',
+			style={'height': '30px', 'width':'950px', 
+				'margin': '0px 2px 2px 0px', 'border-radius': '5px',
+	    		'padding': '5px', 
+	    		'background-color': '#ffb699',
+	    		'border-style': 'hidden',})]
+
+# generate a note for the user about the currently loaded data
 @app.callback(
 	Output('selected_data_description','children'),
 	[Input('picked_stats','children')],
@@ -271,92 +350,26 @@ def return_data_descripton(picked_stats, city, date, hour, filter_keyword, picke
 		style={'height': '30px', 'width':'950px', 
 			'margin': '0px 2px 2px 0px', 'border-radius': '5px',
     		'padding': '5px', 'color': '#23272a',
-    		'background-color': '#7289DA21',
+    		'background-color': '#93ece7',
     		'border-style': 'hidden',})
 
 
-@app.callback(
-	Output('picked_hour','options'),
-	[Input('picked_datetime', 'date')]
-	)
-def set_hour_to_max(date):
-	max_hour = latest_datatime_hour+1 if date == str(latest_datatime_d_dt) else 24
-	return [{'label': str(h) + ':00', 'value':h} for h in range(max_hour)]
-
-
-@app.callback(
-	Output('topwords_timespan','options'),
-	[Input('picked_datetime', 'date')]
-	)
-def update_topwords_timespan(date):
-	return list_timespan if date == str(latest_datatime_d_dt) else list_timespan1
-
-@app.callback(
-	Output('topusers_timespan','options'),
-	[Input('picked_datetime', 'date')]
-	)
-def update_topusers_timespan(date):
-	return list_timespan if date == str(latest_datatime_d_dt) else list_timespan1
-
-@app.callback(
-	Output('toptweets_timespan','options'),
-	[Input('picked_datetime', 'date')]
-	)
-def update_topusers_timespan(date):
-	return list_timespan if date == str(latest_datatime_d_dt) else list_timespan1
-
-
-@app.callback(
-	[Output('picked_city_extended','children'),
-	Output('picked_version', 'options'),
-	Output('picked_version', 'style')],
-	[Input('picked_city', 'value'),
-	Input('picked_version','value')]
-	)
-def city_extended(city, version):
-	if (city=='all') & (version>0) :
-		city_extended = city + '_v' + str(version) 
-		return [city_extended, [{'label': 'Version '+ str(i), 'value': i}  for i in range(1,6)], {'min-width': '100px'}]
-	else:
-		return [city, [{'label':'none', 'value':-1}], {'display': 'none'}]
-
-
-@app.callback(
-	Output('note_filter','children'),
-	[Input('filter_keyword','value'),
-	 Input('filter_submit', 'n_clicks')]
-	)
-def update_note_filter(filter_keyword, n_clicks):
-	if filter_keyword=='': return None
-	context = dash.callback_context.triggered[0]['prop_id'].split('.')[0]
-	print(context) 
-
-	if (context=='filter_submit'):
-		str1 = '<b>Please wait</b>: app is accessing <b>raw data</b>, filtering, and re-calculating statistics... This takes time.'
-	else:
-		str1 = 'Please note: filtering data <b>will take some time</b>. Press <b>"Filter"</b> to proceed.'
-	return [html.Iframe(srcDoc=str1, sandbox='',
-			style={'height': '30px', 'width':'950px', 
-				'margin': '0px 2px 2px 0px', 'border-radius': '5px',
-	    		'padding': '5px', 
-	    		'border-style': 'hidden',})]
-
-
+# disable user inputs while processing data
 @app.callback(
 	[Output(inputid,'disabled') for inputid in input_names],
-	[Input('filter_submit','n_clicks')],
-	[State('filter_keyword','value')]
+	[Input('filter_submit','n_clicks'),
+	Input('picked_city','value'),
+	Input('picked_version','value'),
+	Input('picked_datetime','date')]
 	)
-def disable_inputs(n_clicks, filter_keyword):
-	if n_clicks is None: return [False for i in input_names]	
-	if (n_clicks>0) & (filter_keyword!=''):
-		print('filter_submit disabled')
-		return [True for i in input_names]	
-	else:
-		return [False for i in input_names]	
+def disable_inputs(n_clicks, city, version, date):
+	context = dash.callback_context.triggered[0]['prop_id'].split('.')[0]
+	if context =='': return [False for i in input_names]
+	print('disabling inputs while processing data')	
+	return [True for i in input_names]	
 
 
-
+# load selected statistics 
 @app.callback(
 	[Output('picked_stats','children'),
 	Output('dynamic-input-container', 'children'),
@@ -382,46 +395,51 @@ def pick_stat_city_date(city, date, filter_submit, hour,
 	print('triggered context:', context) 
 
 	if picked_stats is not None:
+		# skip to showing stats for the selected hour
 		stats = json.loads(picked_stats)
 		if (stats['type'] != 'current stats') & (context == 'picked_hour'):
 			print('skipping picked_stats update')
-			clear_filter_keyword(input_container, idx_filter_keyword)
 			return [picked_stats, input_container, note_container]
 
+	# re-create note 
+	note_container2 = [html.Div(id='note_filter', children=[])]
+
 	if (str(date) == str(latest_datatime_d_dt)) & (filter_keyword == '') & (str(hour)==str(latest_datatime_hour)):
+		# load current stats 
 		print('Returning current stats for ' + city)
 		stats = current_data_cities[city]
 		stats['type'] = 'current stats'
 		clear_filter_keyword(input_container, idx_filter_keyword)
-		return [json.dumps(stats), input_container, note_container]
+		return [json.dumps(stats), input_container, note_container2]
 
+	# data to pass to AWS Lambda function
 	data = {'city': city, 'date': date[:10], 
 		'filter_keyword': filter_keyword}
 	
-
+	# re-create input controls 
+	input_container2 = input_container_children(
+		picked_city=city0, picked_version=city_all_version,
+		picked_datetime=date, picked_hour= hour,
+		filter_keyword=filter_keyword, n_clicks=0)
+	
 	if (context=='filter_submit') & (filter_keyword!=''):
+		# filter data and re-calculate stats
 		print('Getting stats for ' + city + ' on ' + date[:10] + ' with filter: ', filter_keyword)
 		result = client.invoke(FunctionName='BLM_stats',
 	                InvocationType='RequestResponse',                                      
 	                Payload=json.dumps(data))
 
-		note_container.pop()
-		note_container.append(html.Div(id='note_filter', children=[]))
-		input_container = input_container_children(
-			picked_city=city0, picked_version=city_all_version,
-			picked_datetime=date, picked_hour= hour,
-			filter_keyword=filter_keyword, n_clicks=0)
-
 	else:
+		# retrieve stats 
 		print('Getting stats for ' + city + ' on ' + date[:10])
 		result = client.invoke(FunctionName='BLM_get_stats',
 	                InvocationType='RequestResponse',                                      
 	                Payload=json.dumps(data))
-		clear_filter_keyword(input_container, idx_filter_keyword)
+		clear_filter_keyword(input_container2, idx_filter_keyword)
 
 
 	print(result)
-	return [json.loads(result['Payload'].read()), input_container, note_container]
+	return [json.loads(result['Payload'].read()), input_container2, note_container2]
 
 
 
