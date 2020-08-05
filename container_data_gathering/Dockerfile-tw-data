@@ -1,0 +1,13 @@
+FROM python:3.8-slim
+
+COPY gather_tw_data1.py /tw_data/
+COPY config_tw_data.py /tw_data/
+COPY requirements_tw_data.txt /tmp
+
+RUN pip3 install -r /tmp/requirements_tw_data.txt
+
+RUN apt update
+RUN apt install vim -y
+
+WORKDIR /tw_data
+CMD ["python3", "gather_tw_data1.py"]

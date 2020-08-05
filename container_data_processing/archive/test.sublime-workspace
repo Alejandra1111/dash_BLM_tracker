@@ -1,0 +1,668 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"get",
+				"get_columns_csv"
+			],
+			[
+				"list",
+				"list_days"
+			],
+			[
+				"files_",
+				"files_original"
+			],
+			[
+				"filesal",
+				"files_all_original"
+			],
+			[
+				"data",
+				"data_dest"
+			],
+			[
+				"files_wr",
+				"files_words"
+			],
+			[
+				"files_exs",
+				"files_existing_original"
+			],
+			[
+				"files_all",
+				"files_all_original"
+			],
+			[
+				"ori",
+				"original"
+			],
+			[
+				"df_",
+				"df_top_emotions"
+			],
+			[
+				"created",
+				"created_at_h"
+			],
+			[
+				"up",
+				"update_current_data"
+			],
+			[
+				"new",
+				"new_original"
+			],
+			[
+				"new_",
+				"new_original"
+			],
+			[
+				"fig_",
+				"fig_sentiments"
+			],
+			[
+				"in",
+				"input_value2"
+			],
+			[
+				"input",
+				"Input"
+			],
+			[
+				"date",
+				"datetime_lang"
+			],
+			[
+				"he",
+				"header\tTag"
+			],
+			[
+				"top",
+				"top_lang"
+			],
+			[
+				"tw",
+				"tweets_listener"
+			],
+			[
+				"acc",
+				"access_secret"
+			],
+			[
+				"acces",
+				"access_token"
+			],
+			[
+				"consu",
+				"consumer_secret"
+			],
+			[
+				"con",
+				"consumer_key"
+			],
+			[
+				"sal",
+				"sal"
+			],
+			[
+				"le",
+				"learning_log"
+			],
+			[
+				"for",
+				"ForeignKey"
+			],
+			[
+				"log",
+				"login_required"
+			],
+			[
+				"en",
+				"entry"
+			],
+			[
+				"ent",
+				"entry_id"
+			],
+			[
+				"p",
+				"p\tTag"
+			],
+			[
+				"Topic",
+				"TopicForm"
+			],
+			[
+				"learn",
+				"learning_logs"
+			],
+			[
+				"lear",
+				"learning_logs"
+			],
+			[
+				"high",
+				"high_score"
+			],
+			[
+				"alien",
+				"alien_points"
+			],
+			[
+				"mous",
+				"mouse_pos"
+			],
+			[
+				"msg_image",
+				"msg_image_rect"
+			],
+			[
+				"msg",
+				"msg_image"
+			],
+			[
+				"butto",
+				"button_color"
+			],
+			[
+				"_check",
+				"_check_alients_bottom"
+			],
+			[
+				"screen",
+				"screen_rect"
+			],
+			[
+				"row",
+				"row_number"
+			],
+			[
+				"num",
+				"number_rows"
+			],
+			[
+				"shi",
+				"ship_height"
+			],
+			[
+				"ali",
+				"alien_height"
+			],
+			[
+				"scree_",
+				"screen_height"
+			],
+			[
+				"alie",
+				"alien_number"
+			],
+			[
+				"n",
+				"number_aliens_x"
+			],
+			[
+				"_up",
+				"_update_bullets"
+			],
+			[
+				"_ch",
+				"_check_keydown_events"
+			],
+			[
+				"scree",
+				"screen_rect"
+			],
+			[
+				"ship",
+				"ship_speed"
+			],
+			[
+				"se",
+				"settings"
+			],
+			[
+				"run",
+				"run_game"
+			],
+			[
+				"Alien",
+				"AlienInvasion"
+			],
+			[
+				"resp",
+				"responses"
+			],
+			[
+				"store",
+				"store_response"
+			],
+			[
+				"test",
+				"test_responses"
+			],
+			[
+				"res",
+				"response"
+			],
+			[
+				"user",
+				"username"
+			],
+			[
+				"fil",
+				"filename3"
+			],
+			[
+				"file",
+				"filename"
+			],
+			[
+				"fav",
+				"fav_lang2"
+			],
+			[
+				"des",
+				"describe_car"
+			],
+			[
+				"class",
+				"class_module_car"
+			],
+			[
+				"bat",
+				"battery_size"
+			],
+			[
+				"ba",
+				"battery_size"
+			],
+			[
+				"gree",
+				"greet_user"
+			],
+			[
+				"flag",
+				"flag_active"
+			],
+			[
+				"name",
+				"name2"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "process_city_data_local3.py",
+			"settings":
+			{
+				"buffer_size": 23782,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/kotaminegishi/sublime_home/Packages/ExpandTabsOnSave/ExpandTabsOnSave.py",
+			"settings":
+			{
+				"buffer_size": 277,
+				"encoding": "UTF-8",
+				"line_ending": "Unix",
+				"name": "import sublime, sublime_plugin, os"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+		[
+			[
+				[
+					"Packages/Python/Python.sublime-build",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					"Syntax Check"
+				]
+			],
+			[
+				"Packages/Python/Python.sublime-build",
+				"Syntax Check"
+			]
+		]
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Users/kotaminegishi/big_data_training/python/dash_demo1/container_data_gathering/config_tw_data.py",
+		"/Users/kotaminegishi/big_data_training/python/dash_demo1/container_data_processing/nltk_downloads.py",
+		"/Users/kotaminegishi/big_data_training/python/dash_demo1/summarizing_helpers.py",
+		"/Users/kotaminegishi/big_data_training/python/dash_demo1/processing_helpers.py",
+		"/Users/kotaminegishi/big_data_training/python/dash_demo1/process_data1.py",
+		"/Users/kotaminegishi/big_data_training/python/dash_demo1/Dockerfile-process-data",
+		"/Users/kotaminegishi/big_data_training/python/dash_demo1/Dockerfile-tw-data",
+		"/Users/kotaminegishi/big_data_training/python/dash_demo1/process_main.py",
+		"/Users/kotaminegishi/big_data_training/python/dash_demo1/test_nltk.py",
+		"/Users/kotaminegishi/big_data_training/python/dash_demo1/tweets_nltk.py",
+		"/Users/kotaminegishi/big_data_training/python/dash_example/app3.py",
+		"/Users/kotaminegishi/big_data_training/python/twitter_webapp_example/readme.md",
+		"/Users/kotaminegishi/big_data_training/python/twitter_webapp_example/readme.tx",
+		"/Users/kotaminegishi/big_data_training/python/twitter_webapp_example/requirements.txt",
+		"/Users/kotaminegishi/big_data_training/python/docker_example1/docker-compose.yaml",
+		"/Users/kotaminegishi/big_data_training/python/twitter_webapp_example/server-debug.sh",
+		"/Users/kotaminegishi/big_data_training/python/twitter_webapp_example/app.yaml",
+		"/Users/kotaminegishi/big_data_training/python/twitter_webapp_example/templates/Dockerfile",
+		"/Users/kotaminegishi/big_data_training/python/twitter_webapp_example/templates/docker-compose.yaml",
+		"/Users/kotaminegishi/big_data_training/python/twitter_webapp_example/sqldata1.py",
+		"/Users/kotaminegishi/big_data_training/python/twitter_webapp_example/static/about.html",
+		"/Users/kotaminegishi/big_data_training/python/twitter_webapp_example/static/style.css",
+		"/Users/kotaminegishi/big_data_training/python/twitter_webapp_example/style.css",
+		"/Users/kotaminegishi/big_data_training/python/twitter_webapp_example/templates/index.html",
+		"/Users/kotaminegishi/big_data_training/python/twitter_webapp_example/trendstream1.py",
+		"/Users/kotaminegishi/big_data_training/python/twitter_webapp_example/trendstream3.py",
+		"/Users/kotaminegishi/big_data_training/python/twitter_webapp_example/trendstream2.py",
+		"/Users/kotaminegishi/big_data_training/python/twitter_webapp_example/stream2.py",
+		"/Users/kotaminegishi/big_data_training/python/twitter_webapp_example/stream1.py",
+		"/Users/kotaminegishi/big_data_training/python/blm/requirements.txt",
+		"/Users/kotaminegishi/Dropbox/Python_projects/first_app/app.yaml",
+		"/Users/kotaminegishi/Dropbox/Python_projects/first_app/hello.py",
+		"/Users/kotaminegishi/big_data_training/python/TwitterBot1/config.py",
+		"/Users/kotaminegishi/big_data_training/R/spark_example.R",
+		"/Users/kotaminegishi/Google Drive UMN/Jobs/generic_cover_letter2.txt",
+		"/Users/kotaminegishi/FoodTrucks/docker-compose.yml",
+		"/Users/kotaminegishi/Google Drive/Jobs/generic_cover_letter2.txt",
+		"/Users/kotaminegishi/big_data_training/hello_world.py",
+		"/Users/kotaminegishi/big_data_training/test.txt",
+		"/Users/kotaminegishi/big_data_training/python/twitter_example.py",
+		"/Users/kotaminegishi/big_data_training/SPARK-PROJECT-2/project-2/TwitterProject/TwitterAnalysis/ReadMe.txt",
+		"/Users/kotaminegishi/Downloads/LECTURE 19 – STREAMING TRANSFORMATIONS/SparkStreamingExamples/Readme.txt.txt",
+		"/usr/local/Cellar/apache-spark/python/pyspark/__init__.py",
+		"/Users/kotaminegishi/Downloads/test.txt",
+		"/Users/kotaminegishi/bid_data_training/Hadoop/Hadoop and eco system installation steps.txt",
+		"/Users/kotaminegishi/Downloads/word_count.txt",
+		"/Users/kotaminegishi/Dropbox/SQL_projects/SQL_guide1.txt",
+		"/Users/kotaminegishi/Google Drive/Jobs/Comcast_project/instructions.txt",
+		"/Users/kotaminegishi/Google Drive/Morris_data/analysis/CM_estrus/readme.txt",
+		"/Users/kotaminegishi/Google Drive/Morris_data/analysis/CM_estrus/readme_archive.txt",
+		"/Users/kotaminegishi/Downloads/70215_example_README.txt",
+		"/Users/kotaminegishi/Downloads/S1364032112002146.txt",
+		"/Users/kotaminegishi/Google Drive/Animal Welfare Studies/D2D_2019/logofcode.txt",
+		"/Users/kotaminegishi/Dropbox/R_projects/teaching/reg_result_1.txt",
+		"/Users/kotaminegishi/Google Drive/Dog_Parks/explore/visits.txt",
+		"/Users/kotaminegishi/Google Drive/learning_python/learning_log/learning_log/templates/learning_log/404.html",
+		"/Users/kotaminegishi/Google Drive/learning_python/learning_log/learning_log/templates/learning_log/500.html",
+		"/Users/kotaminegishi/Google Drive/learning_python/learning_log/learning_log/templates/500.html",
+		"/Users/kotaminegishi/Google Drive/learning_python/learning_log/templates/500.html",
+		"/Users/kotaminegishi/Google Drive/learning_python/learning_log/templates/404.html",
+		"/Users/kotaminegishi/Google Drive/learning_python/learning_log/learning_log/templates/404.html",
+		"/Users/kotaminegishi/Google Drive/learning_python/learning_log/templates/learning_log/404.html",
+		"/Users/kotaminegishi/Google Drive/learning_python/learning_log/views.py",
+		"/Users/kotaminegishi/Google Drive/learning_python/learning_log/learning_logs/models.py",
+		"/Users/kotaminegishi/Google Drive/learning_python/learning_log/learning_logs/templates/learning_logs/edit_entry.html",
+		"/Users/kotaminegishi/Google Drive/learning_python/learning_log/users/templates/registration/login.html",
+		"/Users/kotaminegishi/Google Drive/learning_python/learning_log/users/templates/registration/register.html",
+		"/Users/kotaminegishi/Google Drive/learning_python/learning_log/learning_logs/admin.py",
+		"/Users/kotaminegishi/Google Drive/learning_python/learning_log/users/urls.py",
+		"/Users/kotaminegishi/Google Drive/learning_python/learning_log/users/views.py",
+		"/Users/kotaminegishi/Google Drive/learning_python/learning_log/users/templates/registration/logged_out.html",
+		"/Users/kotaminegishi/Google Drive/learning_python/learning_log/learning_logs/templates/learning_logs/archive_base.html",
+		"/Users/kotaminegishi/Google Drive/learning_python/learning_log/learning_logs/templates/learning_logs/index.html",
+		"/Users/kotaminegishi/Google Drive/learning_python/learning_log/learning_logs/templates/learning_logs/topics.html",
+		"/Users/kotaminegishi/Google Drive/learning_python/learning_log/learning_logs/forms.py",
+		"/Users/kotaminegishi/Google Drive/learning_python/learning_log/learning_logs/templates/learning_logs/topic.html",
+		"/Users/kotaminegishi/Google Drive/learning_python/learning_log/learning_logs/templates/learning_logs/new_topic.html",
+		"/Users/kotaminegishi/Google Drive/learning_python/learning_log/learning_logs/templates/learning_logs/new_entry.html",
+		"/Users/kotaminegishi/Google Drive/learning_python/learning_log/Procfile",
+		"/Users/kotaminegishi/Google Drive/learning_python/learning_log/.gitignore",
+		"/Users/kotaminegishi/Google Drive/learning_python/learning_log/runtime.txt",
+		"/Users/kotaminegishi/Google Drive/learning_python/learning_log/users/templates/registration/logout.html",
+		"/Users/kotaminegishi/Google Drive/learning_python/learning_log/users/templates/users/registration/login.html",
+		"/Users/kotaminegishi/Google Drive/learning_python/user_input.py",
+		"/Users/kotaminegishi/Google Drive/learning_python/learning_log/learning_logs/base.html",
+		"/Users/kotaminegishi/Google Drive/learning_python/alien_invasion/settings.py",
+		"/Users/kotaminegishi/Google Drive/learning_python/alien_invasion/alien_invasion.py",
+		"/Users/kotaminegishi/Google Drive/learning_python/testing.py",
+		"/Users/kotaminegishi/Google Drive/learning_python/alien_invasion/game_stats.py",
+		"/Users/kotaminegishi/Google Drive/learning_python/alien_invasion/scoreboard.py",
+		"/Users/kotaminegishi/Google Drive/learning_python/alien_invasion/button.py",
+		"/Users/kotaminegishi/Google Drive/learning_python/alien_invasion/alien.py",
+		"/Users/kotaminegishi/Google Drive/learning_python/alien_invasion/ship.py",
+		"/Users/kotaminegishi/Google Drive/learning_python/alien_invasion/bullet.py",
+		"/Users/kotaminegishi/Google Drive/learning_python/survey.py",
+		"/Users/kotaminegishi/Google Drive/learning_python/json_r_w.py",
+		"/Users/kotaminegishi/Google Drive/learning_python/read_write.py",
+		"/Users/kotaminegishi/Google Drive/learning_python/car_example.py",
+		"/Users/kotaminegishi/Google Drive/learning_python/class_module_car.py",
+		"/Users/kotaminegishi/Google Drive/learning_python/dictionaries.py",
+		"/Users/kotaminegishi/Google Drive/learning_python/function1.py",
+		"/Users/kotaminegishi/Google Drive/learning_python/hello_world.py",
+		"/Users/kotaminegishi/Library/Application Support/Sublime Text 3/Packages/User/Python3.sublime-build",
+		"/Users/kotaminegishi/Library/Application Support/Sublime Text 3/Packages/User/python3.sublime-build",
+		"/Users/kotaminegishi/Downloads/data_table.md",
+		"/Users/kotaminegishi/Google Drive/apps/RobotParlor/text/disclaimer.md",
+		"/Users/kotaminegishi/Google Drive/apps/RobotParlor/text/updatelog.md",
+		"/Users/kotaminegishi/Google Drive/apps/RobotParlor/text/about.md",
+		"/Users/kotaminegishi/Google Drive/apps/RobotParlor/text/introduction_more.md",
+		"/Users/kotaminegishi/Google Drive/apps/RobotParlor/text/factsheets.md",
+		"/Users/kotaminegishi/Google Drive/apps/RobotParlor/text/introduction.md",
+		"/Users/kotaminegishi/Google Drive/apps/RobotParlor/Simulation/ui_simulation.R",
+		"/Users/kotaminegishi/Desktop/tmp_simulation_ui.R"
+	],
+	"find":
+	{
+		"height": 40.0
+	},
+	"find_in_files":
+	{
+		"height": 104.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": true,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "process_city_data_local3.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 23782,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3634,
+								3638
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 505.0,
+						"translation.y": 5095.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "/Users/kotaminegishi/sublime_home/Packages/ExpandTabsOnSave/ExpandTabsOnSave.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 277,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								277,
+								277
+							]
+						],
+						"settings":
+						{
+							"auto_name": "import sublime, sublime_plugin, os",
+							"syntax": "Packages/Python/Python.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 28.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 132.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "Packages/User/python3.sublime-build",
+	"project": "test.sublime-project",
+	"replace":
+	{
+		"height": 52.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"~/big_data_training/SPARK-PROJECT-2/project-2/TwitterProject/TwitterAnalysis/ReadMe.txt"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 150.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

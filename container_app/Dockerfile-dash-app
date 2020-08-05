@@ -1,0 +1,18 @@
+FROM python:3.8-slim
+
+COPY . /app/
+
+COPY requirements_app.txt /tmp
+
+RUN apt update
+RUN apt install vim -y
+RUN apt install gcc -y
+
+RUN pip3 install -r /tmp/requirements_app.txt
+
+EXPOSE 8050
+
+WORKDIR /app
+
+#CMD ["python3", "app1_nocache.py"]
+CMD  tail -f /dev/null 

@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+#   webapp:
+#     container_name: webapp
+#     build: 
+#       context: .
+#       dockerfile: Dockerfile-webapp
+#     ports:
+#       - 5000:5000
+#     # restart: always
+#     volumes:
+#       - web_data:/web_data
+#     command: python3 flask4.py
+#     # just to keep container running
+#     # command: tail -f /dev/null
+
+  twitterdata:
+    container_name: tw-data
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+    build:
+      context: .
+      dockerfile: Dockerfile-tw-data
+    restart: always
+    # volumes:
+    #   - web_data_blm:/data
+    # start the program
+    command: python3 gather_tw_data1.py 
+    # just to keep container running
+    # command: tail -f /dev/null 
+
+  processing:
+    container_name: process-data
+    build:
+      context: .
+      dockerfile: Dockerfile-process-data
+    restart: always
+    command: python3 process_data1.py
+
+
+# volumes:
+  # web_data_blm:

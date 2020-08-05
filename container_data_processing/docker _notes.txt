@@ -1,0 +1,26 @@
+
+# install docker 
+sudo apt install docker.io
+sudo adduser ubuntu docker
+
+# example of uploading file
+scp -i "dash_key1.pem" container_data_processing/process_data1.py ubuntu@ec2-3-17-143-14.us-east-2.compute.amazonaws.com:/tmp
+
+
+docker build -f Dockerfile-process-data -t process-data  .
+
+# docker run -d -v /Users/kotaminegishi/big_data_training/python/dash_demo1:/data process-data
+
+docker run -d -v /mounted:/data  process-data 
+
+docker run -d -v /mounted:/data --restart always process-data 
+
+docker ps
+
+docker exec -it f20  bash
+
+
+
+docker build -f Dockerfile-dash-app -t dash-app  .
+docker run -d -v /mounted:/data -p 8050:8050 dash-app 
+
