@@ -1,7 +1,7 @@
 
 ## About this app
 
-This site is a web application of **Twitter** data gathering, storage, and analysis on hashtag **BlackLivesMatter**. It is powered by **Twitter API**, **AWS Kinesis**, **Python**, and **Dash**. [Source code](link_here). 
+This site is a web application of **Twitter** data gathering, storage, and analysis on hashtag **BlackLivesMatter**. It is powered by **Twitter API**, **AWS Kinesis**, **Python**, and **Dash**. [Source code](https://github.com/kotamine/dash_BLM_tracker). 
 
 Users of this app can **browse through BLM statistics** for **selected city and time** to observe **trends in sentiments and emotions** and discover **top tweets and influencers**. One can also apply **a keyword filter** to narrow the focus.   
 
