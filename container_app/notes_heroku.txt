@@ -1,0 +1,38 @@
+
+# following https://devcenter.heroku.com/articles/container-registry-and-runtime
+
+heroku container:login
+docker login --username=kotamine --password=$(heroku auth:token) registry.heroku.com
+
+docker build -f Dockerfile-dash-app2 -t blm-tracker 
+
+docker tag blm-tracker registry.heroku.com/blm-tracker/web
+docker push registry.heroku.com/blm-tracker/web
+
+heroku container:release web -a=blm-tracker 
+heroku logs -a=blm-tracker
+heroku open -a=blm-tracker
+
+
+
+# run locally
+gunicorn app4_nocache:server -b :8050
+gunicorn app4_rq:server -b :8050
+gunicorn app5:server -b :8050
+
+
+
+# mostly followig https://dash.plotly.com/deployment
+
+git init
+# Procfile
+web: gunicorn appfilename:server
+
+heroku create my-dash-app # change my-dash-app to a unique name
+git add . # add all files to git
+git commit -m 'Initial app boilerplate'
+
+heroku stack:set container
+git push heroku master # deploy code to heroku
+heroku ps:scale web=1  # run the app with a 1 heroku "dyno"
+

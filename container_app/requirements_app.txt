@@ -9,4 +9,6 @@ dash-html-components==1.0.3
 dash-renderer==1.6.0
 dash-table==4.9.0
 boto3==1.12.2
+gunicorn==20.0.4
+# rq==1.5.0
 # Flask-Caching==1.9.0

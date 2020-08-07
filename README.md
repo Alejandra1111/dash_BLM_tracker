@@ -4,7 +4,7 @@ This repository contains source code for a web application of **Twitter** data g
  
 Users of this app can **browse through BLM statistics** for **selected city and time** to observe **trends in sentiments and emotions** and discover **top tweets and influencers**. One can also apply **a keyword filter** to narrow the focus.   
 
-Currently live app is hosted in [an AWS EC2 micro instance](http://18.223.131.215:8050/). The app's response speed is much slow in this low-key EC2 instance compared to running the app in laptop.   
+Currently live app is hosted in [an Heroku free dyno instance](https://blm-tracker-app.herokuapp.com/). 
 
 
 ## Current Project Status 

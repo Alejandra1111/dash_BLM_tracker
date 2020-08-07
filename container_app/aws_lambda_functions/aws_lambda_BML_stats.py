@@ -462,7 +462,7 @@ def time_subsets_all(df, now=None):
         
         #df.created_at_h = pd.to_datetime(df.created_at_h)
         df['created_at_d'] = df.created_at_h.dt.floor('d')
-        df['hour'] = int(str(df.created_at_h)[11:13])
+        df['hour'] = df.created_at_h.apply(lambda x: int(str(x)[11:13]))
 
         subsets = placeholder()
         for h in range(24):

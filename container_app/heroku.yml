@@ -1,0 +1,5 @@
+build:
+  docker:
+    web: Dockerfile-dash-app2
+run:
+  web: python app5.py

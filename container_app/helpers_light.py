@@ -38,11 +38,16 @@ def city_date(city, date):
 
 
 def clear_filter_keyword(input_container, pos):
-   # print(input_container[pos])
+    #print(input_container[pos])
     if 'props' in input_container[pos]:
         input_container[pos]['props']['value'] = ''
     elif hasattr(input_container[pos],'value'):
         input_container[pos].value = ''
+
+
+def stat_list(stats):
+    return [stats['stat_sentiments'], stats['stat_emotions'], stats['stat_words'], 
+        stats['top_tweets'], stats['top_users'], stats['type']]
 
 
 '''

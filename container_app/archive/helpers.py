@@ -9,12 +9,39 @@ import matplotlib.pyplot as plt
 from PIL import Image
 import dash_table
 import copy
-from flask_caching import Cache
 import itertools 
 from io import BytesIO
 import base64
+from glob import glob 
+from math import isnan
+import dash_html_components as html
+
 
 from summarizing_helpers import *
+
+
+'''
+	misc unctions 
+'''
+
+def city_name_add_space(name):
+    caps = [i for i,c in enumerate(name) if c.isupper()]
+    i = 0
+    for l in caps[1:]:
+        name = name[:(l+i)] + ' ' + name[(l+i):]
+        i = i+1
+    return name
+
+def city_value(city_label_value):
+    return city_label_value['value']
+
+def city_date(city, date):
+	return str(city) + '#' + str(date)
+
+
+def clear_filter_keyword(input_container, pos):
+	input_container[pos]['props']['value'] = ''
+
 
 
 '''
@@ -23,57 +50,96 @@ from summarizing_helpers import *
 
 
 
-def fix_datetime(df, timevar='time'):
+
+def fix_datetime(df, timevar='created_at_h'):
     df[timevar] = pd.to_datetime(df[timevar])
-    return df
 
 def fix_token_counter(df):
     df.token_counter = df.token_counter.apply(lambda x: Counter(x))  
-    return df
 
 def fix_RT_id(df):
-    df.RT_id = df.RT_id.astype(str) 
-    return df
+    df.RT_id = df.RT_id.astype(str)
+
+def fix_user_id(df):
+    df.user_id = df.user_id.astype(str)    
 
 def convert_floats(df, float_dtype='float32'):
     floats = df.select_dtypes(include=['float64']).columns.tolist()
     df[floats] = df[floats].astype(float_dtype)
     return df
 
-def tw_data_files_to_df_csv2(files, frac=0.05, float_dtype=None):
-    '''append and concat a sample of data into a pandas.DataFrame'''
+def convert_ints(df, int_dtype='int32'):
+    ints = df.select_dtypes(include=['int64']).columns.tolist()
+    df[ints] = df[ints].astype(ints_dtype)
+    return df
+
+def tw_data_files_to_df_csv(files, float_dtype='float32'):
+    '''append and concat data files into a pandas.DataFrame'''
     df = []
-    [ df.append(pd.read_csv(file, low_memory=True)
-        .sample(frac=frac, replace=True)) for file in files ]
+    [ df.append(pd.read_csv(file)) for file in files ]
     df = pd.concat(df, ignore_index=True)
     if float_dtype is None: return df
     return convert_floats(df, float_dtype)
 
-def tw_data_files_to_df_json3(files, lines=False, frac=0.05, float_dtype=None, verbose=False):
-    '''append and concat a sample of data into a pandas.DataFrame'''
+
+def tw_data_files_to_df_json(files, lines=False, float_dtype='float32'):
+    '''append and concat data files into a pandas.DataFrame'''
     df = []
-    for file in files:
-    	if verbose: print('loading ' + file)
-    	df.append(pd.read_json(file, orient='records', lines=lines)
-                 .sample(frac=frac, replace=True)) 
+    [ df.append(pd.read_json(file, orient='records', lines=lines)) for file in files ]
     df = pd.concat(df, ignore_index=True)
     if float_dtype is None: return df
     return convert_floats(df, float_dtype)
 
-def keep_recent_files(files, base_timestamp, file_type= '.json', days = 14):
-    timestamps = [pd.Timestamp(file.split('created_at_',1)[1]
+
+def keep_recent_files(files, base_timestamp, file_type= '.json', days = 14, no_newer=False,
+                      prefix = 'created_at_'):
+    timestamps = [pd.Timestamp(file.split(prefix,1)[1]
                                .replace(file_type,'').replace('_',' ')) for file in files ]
-    keep_idx1 = [(base_timestamp - timestamp) <= pd.Timedelta(days, unit='d') for timestamp in timestamps]
+    if no_newer: 
+        keep_idx1 = [(base_timestamp - timestamp <= pd.Timedelta(days, unit='d')) & 
+                     (base_timestamp - timestamp >= pd.Timedelta(0, unit='d')) for timestamp in timestamps]
+    else: 
+        keep_idx1 = [base_timestamp - timestamp <= pd.Timedelta(days, unit='d') for timestamp in timestamps]
     return(list(itertools.compress(files,keep_idx1)))
+
+def keep_by_matched_id(df, list_id, varname='id'):
+    return (df.set_index(varname)
+            .join(pd.DataFrame(data={varname: list_id}).set_index(varname), how='inner')
+            .reset_index()
+            )
+    
+def get_stats(cum_original, cum_retweet, cum_words, 
+	cum_sentiments, cum_emotions, time=None):
+	print('In get_stats()')
+	stat_sentiments = calc_stat_sentiments(cum_sentiments)
+	stat_emotions = calc_stat_emotions(cum_emotions)
+	del cum_sentiments, cum_emotions
+
+	cum_data = cumulative_data(cum_ori = cum_original, 
+	                      cum_rt = cum_retweet,
+	                      cum_words = cum_words,
+	                      now = time
+	                      )
+	del cum_original, cum_retweet, cum_words
+
+	cum_data.add_words_subsets()
+	cum_data.add_tweet_subsets()
+	cum_data.add_user_subsets() 
+
+	stat_words = cum_data.stat_words
+	top_tweets = cum_data.top_tweets
+	top_users = cum_data.top_users 
+
+	return stat_sentiments, stat_emotions, stat_words, top_tweets, top_users
 
 
 
 def filter_data(filter_word, cum_original, cum_retweet, cum_words, 
 	cum_sentiments, cum_emotions, time=None):
-    # define filtered data of cum_data and recalculate stats 
+    # define filtered data of cum_data 
     # filter_word = 'protest'
     print('In filter_data():')
-    cum_original2, cum_retweet2, cum_words2 = filter_datasets(filter_word,
+    cum_original2, cum_retweet2, cum_words2 = filter_main(filter_word,
     	cum_original, cum_retweet, cum_words)
     
     # print(cum_words2)
@@ -82,28 +148,7 @@ def filter_data(filter_word, cum_original, cum_retweet, cum_words,
     cum_emotions2 = filter_sentiments(cum_sent = cum_emotions, 
                                         ori_filtered = cum_original2)    
     
-    # print(cum_sentiments2)
-    stat_sentiments = calc_stat_sentiments(cum_sentiments2)
-    stat_emotions = calc_stat_emotions(cum_emotions2)
-    
-    # print(stat_sentiments)
-    cum_data2 = cumulative_data(cum_ori = cum_original2, 
-                          cum_rt = cum_retweet2,
-                          cum_words = cum_words2,
-                          now = time
-                          #now = datetime(2020, 6, 28, 21, 00, 00)
-                          )
-
-    cum_data2.add_words_subsets()
-    cum_data2.add_tweet_subsets()
-    cum_data2.add_user_subsets() 
-
-    stat_words = cum_data2.stat_words
-    top_tweets = cum_data2.top_tweets
-    top_users = cum_data2.top_users 
-    # print(stat_words)
-
-    return stat_sentiments, stat_emotions, stat_words, top_tweets, top_users
+    return get_stats(cum_original2, cum_retweet2, cum_words2, cum_sentiments2, cum_emotions2, time)
 
 
 def filter_sentiments(cum_sent, ori_filtered):
@@ -118,12 +163,12 @@ def filter_sentiments(cum_sent, ori_filtered):
 	return cum_sent2
 
 
-def filter_datasets(filter_word, cum_original, cum_retweet, cum_words):
+def filter_main(filter_word, cum_original, cum_retweet, cum_words):
 	''' filtered data are sequentially defined for retweet, original, words dataset'''
 	print('IN filter_datasets():')
 	idx_a =  cum_retweet.tokens.apply(lambda x: filter_word in x)
 	cum_retweet2 = cum_retweet[idx_a]
-	print(sum(idx_a))
+	#print(sum(idx_a))
 
 	idx_b = cum_original.tokens.apply(lambda x: filter_word in x)
 	match_b = (cum_original.set_index('RT_id')
@@ -134,16 +179,50 @@ def filter_datasets(filter_word, cum_original, cum_retweet, cum_words):
 	                 .drop_duplicates(subset=['id'])
 	                 .reset_index()
 	                )
-	print(sum(idx_b),len(cum_original2))
+	#print(sum(idx_b),len(cum_original2))
 
 	cum_words2 = (cum_words.set_index('id')
 		.join(cum_original2.set_index('id'), rsuffix = '_ORI', how='inner')
 		.reset_index()
 		)
 
-	print(len(cum_words2))
+	#print(len(cum_words2))
 
 	return cum_original2, cum_retweet2, cum_words2
+
+
+
+
+def get_columns_json(file):
+    chunk1 = pd.read_json(file, chunksize=1, orient='records', lines=True)
+    for d in chunk1:
+        data1 = d.iloc[0]
+        break
+    return list(data1.keys())
+
+def get_columns_csv(file):
+    chunk1 = pd.read_csv(file, chunksize=1)
+    return list(chunk1.read(1).keys())
+
+
+def load_null_df(data_path):
+    
+    null_cum_sentiments = pd.DataFrame(columns = get_columns_csv(
+                     glob(data_path + 'data_cumulative/sentiments/*')[0]))
+    
+    null_cum_emotions = pd.DataFrame(columns = get_columns_csv(
+                     glob(data_path + 'data_cumulative/emotions/*')[0]))
+    
+    null_cum_words = pd.DataFrame(columns = get_columns_json(
+                     glob(data_path + 'data_cumulative/words/*')[0]))
+    
+    null_cum_original = pd.DataFrame(columns = get_columns_json(
+                     glob(data_path + 'data_cumulative/original/*')[0]))
+    
+    null_cum_retweet = pd.DataFrame(columns = get_columns_json(
+                     data_path + 'data_cumulative/retweet/2020_all_retweets.json'))
+    
+    return null_cum_sentiments, null_cum_emotions, null_cum_words, null_cum_original, null_cum_retweet
 
 
 
@@ -152,7 +231,36 @@ def filter_datasets(filter_word, cum_original, cum_retweet, cum_words):
 '''
 
 
+
+no_data_fig = {"layout": {
+        "xaxis": {
+            "visible": False
+        },
+        "yaxis": {
+            "visible": False
+        },
+        "annotations": [
+            {
+                "text": "No matching data found.",
+                "xref": "paper",
+                "yref": "paper",
+                "showarrow": False,
+                "font": {
+                    "size": 20
+                }
+            }
+        ]
+    }
+}
+
+def get_timespan(hour, timespan):
+	return 'hour_' + str(hour) if timespan == 'now_1h' else timespan
+
+
+
 def fig_sentiments(df):
+	if len(df)==0: return no_data_fig
+
 	colors = ['#ff5733', '#33dbff']
 	line_size = [5,5]
 		
@@ -189,13 +297,14 @@ def fig_sentiments(df):
 		rangeslider_visible=True,
 		rangeselector=dict(
 			buttons=list([
-				dict(count=1, label="1d", step="day", stepmode="backward"),
-				dict(count=7, label="1w", step="day", stepmode="backward"),
-				dict(count=1, label="1m", step="month", stepmode="backward"),
-				dict(count=6, label="6m", step="month", stepmode="backward"),
-				dict(count=1, label="YTD", step="year", stepmode="todate"),
-				dict(count=1, label="1y", step="year", stepmode="backward"),
-				dict(step="all")
+	            dict(count=1, label="1d", step="day", stepmode="backward"),
+	            dict(count=7, label="1w", step="day", stepmode="backward"),
+	            dict(count=14, label="2w", step="day", stepmode="backward"),
+	            # dict(count=1, label="1m", step="month", stepmode="backward"),
+	            # dict(count=6, label="6m", step="month", stepmode="backward"),
+	            # dict(count=1, label="YTD", step="year", stepmode="todate"),
+	            # dict(count=1, label="1y", step="year", stepmode="backward"),
+	            dict(step="all")
 				])
 			)
 		)
@@ -211,6 +320,8 @@ def fig_sentiments(df):
 
 
 def fig_emotions(df):
+	if len(df)==0: return no_data_fig
+
 	x_data = df.time
 	y_data = df[['fear','anger','trust','surprise','sadness','disgust','joy']]
 
@@ -241,10 +352,11 @@ def fig_emotions(df):
 	        buttons=list([
 	            dict(count=1, label="1d", step="day", stepmode="backward"),
 	            dict(count=7, label="1w", step="day", stepmode="backward"),
-	            dict(count=1, label="1m", step="month", stepmode="backward"),
-	            dict(count=6, label="6m", step="month", stepmode="backward"),
-	            dict(count=1, label="YTD", step="year", stepmode="todate"),
-	            dict(count=1, label="1y", step="year", stepmode="backward"),
+	            dict(count=14, label="2w", step="day", stepmode="backward"),
+	            # dict(count=1, label="1m", step="month", stepmode="backward"),
+	            # dict(count=6, label="6m", step="month", stepmode="backward"),
+	            # dict(count=1, label="YTD", step="year", stepmode="todate"),
+	            # dict(count=1, label="1y", step="year", stepmode="backward"),
 	            dict(step="all")
 	        ])
 	    )
@@ -257,7 +369,7 @@ def fig_emotions(df):
 	    legend=dict(
 	        font_size=14,
 	        x = 0,
-	        y = 1.1,
+	        y = 1.085,
 	        
 	    ),
 	)
@@ -289,7 +401,9 @@ def fig_to_uri(in_fig, close_all=True, **save_args):
 
 def fig_word_cloud(stat_words, subset='now_1h', max_num=200):
 	print('IN fig_word_cloud():')
+	if sum(stat_words.subset==subset)==0: return plt.figure(figsize=[1,1])
 	words_dict = stat_words[stat_words.subset==subset].token_counter.iloc[0]
+	if words_dict =={}: return plt.figure(figsize=[1,1])
 
 	custom_mask = np.array(Image.open("twitter_bird.png"))
 	wc = WordCloud(background_color="white", mask=custom_mask)
@@ -302,7 +416,9 @@ def fig_word_cloud(stat_words, subset='now_1h', max_num=200):
 
 
 def fig_word_bars(stat_words, subset='now_1h', num=15):
+	if sum(stat_words.subset==subset)==0: return no_data_fig
 	words_dict = stat_words[stat_words.subset==subset].token_counter.iloc[0]
+	if words_dict =={}: return no_data_fig
 
 	words_dict15 = Counter(words_dict).most_common(num)
 	words_dict15 = dict(words_dict15)
@@ -328,21 +444,26 @@ def clean_top_tweets(top_tweets):
 	  'user_name':'User Name', 
 	  'followers_count':'Followers',
 	  'text':'Tweet',
-	  'retweet_timespan':'RTs Current',
-	  'retweet_total':'RTs Total',
+	  'retweet_timespan':'Retweets Selected',
+	  'retweet_total':'Retweets Total',
 	  'tags':'Tags','t_co':'URL'})
+	#print(df)
+
+	df['User Name'] = df['User Name'].apply(lambda x: 
+		'[' + str(x) + '](https://twitter.com/'+  str(x) + ')'
+	)
 
 	df['Tweet'] = df['Tweet'].apply(lambda x: 
 		x.replace('"','').replace("'",'')
 		)
 
 	df['Tags'] = df['Tags'].apply(lambda x:
-	 x.replace('[','').replace(']','').replace("'",'')
-	 .replace('.','').replace("'#BlackLivesMatter',",'')
+	 str(x).replace('[','').replace(']','').replace("'",'')
+	 .replace('.',' ').replace(',',' ').replace("#BlackLivesMatter",'')
 	 )
 
 	df['URL'] = df['URL'].apply(lambda x:
-		'[' + x + '](' +  x + ')'
+		'[' + str(x) + '](' +  str(x) + ')'
 		)
 	return df
 
@@ -354,10 +475,10 @@ col_widths_toptweets = [
 	         'width': '40px'},
 	        {'if': {'column_id': 'Tweet'},
 	         'width': '450px'},
-	        {'if': {'column_id': 'RTs Current'},
+	        {'if': {'column_id': 'Retweets Selected'},
 	        'textAlign': 'center',
 	         'width': '40px'},
-	        {'if': {'column_id': 'RTs Total'},
+	        {'if': {'column_id': 'Retweets Total'},
 	        'textAlign': 'center',
 	         'width': '40px'},
 	        {'if': {'column_id': 'Tags'},
@@ -384,10 +505,13 @@ def clean_top_users(top_users):
 	  'user_name':'User Name', 
 	  'followers_count':'Followers',
 	  'retweeted':'Retweets',
-	  'user_description':'Description'})
+	  'user_description':'User Description'})
 
-	df['Description'] = df['Description'].apply(lambda x: 
-		x.replace('"','').replace("'",'')
+	df['User Name'] = df['User Name'].apply(lambda x: 
+		'[' + str(x) + '](https://twitter.com/'+  str(x) + ')'
+	)
+	df['User Description'] = df['User Description'].apply(lambda x: 
+		str(x).replace('"','').replace("'",'')
 		)
 
 	return df
@@ -401,27 +525,52 @@ col_widths_topusers = [
 	        {'if': {'column_id': 'Retweets'},
 	        'textAlign': 'center',
 	         'width': '40px'},
-	        {'if': {'column_id': 'Description'},
+	        {'if': {'column_id': 'User Description'},
 	         'width': '450px'},
 	         ]
+
+
+no_data_txt = '<center>No matching data found.</center>' 
+no_data_tbl = html.Iframe(srcDoc=no_data_txt, sandbox='',
+		style={'height': '150px', 'width':'75%', 
+			'border-radius': '5px',
+			'display': 'block',
+			'margin-left': 'auto',
+			'margin-right': 'auto',
+			'padding-top': '125px',
+			'color': '#23272a',
+    		'background-color': '#7289DA21',
+    		'border-style': 'hidden',})
+
+
 def gen_dash_table(id, df_subsets, subset='now_1h', type='top_tweets'):
+
 	df = df_subsets[df_subsets.subset==subset]
-	if len(df)==0: return None
+	if len(df)==0: return no_data_tbl
 
 	if type=='top_tweets':
+		#if isnan(df.RT_id.iloc[0]): return None
+		#if df.RT_id.iloc[0]=='': return None
+		if df.RT_id.iloc[0] in ['nan', '']: return no_data_tbl
 		df = clean_top_tweets(df)
 		col_widths = col_widths_toptweets
 		rule = rule_toptweets
 	else:
+		#if isnan(df.user_id.iloc[0]): return None
+		if df.user_id.iloc[0] in ['nan', '']: return no_data_tbl
 		df = clean_top_users(df)
 		col_widths = col_widths_topusers 
 		rule = rule_topusers
 
-	print(df)
+	#print(df)
 
-	if 'URL' in df.columns:
-		columns = [{'id': c, 'name': c} for c in df.columns.drop('URL')]
+	if type=='top_tweets': 
+		columns = [{'id': c, 'name': c} for c in df.columns.drop(['URL','User Name'])]
 		columns.append({'name': 'URL', 'id':'URL','type':'text','presentation':'markdown'})
+		columns.insert(0, {'name': 'User Name', 'id':'User Name','type':'text','presentation':'markdown'})
+	elif type=='top_users': 
+		columns = [{'id': c, 'name': c} for c in df.columns.drop('User Name')]
+		columns.insert(0, {'name': 'User Name', 'id':'User Name','type':'text','presentation':'markdown'})
 	else:
 		columns = [{'id': c, 'name': c} for c in df.columns]
 
@@ -465,7 +614,10 @@ def gen_dash_table(id, df_subsets, subset='now_1h', type='top_tweets'):
 def fig_top_users(top_users, subset='now_1h'):
 	#import plotly.graph_objects as go
 	df = top_users[top_users.subset==subset]
-
+	if len(df)==0: return no_data_fig
+	#if isnan(df.user_id.iloc[0]): return go.Figure()
+	if df.user_id.iloc[0] in ['nan', '']: return no_data_fig
+	
 	user = df.user_name
 	retweeted = df.retweeted
 	followers = df.followers_count
