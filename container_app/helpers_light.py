@@ -50,6 +50,7 @@ def stat_list(stats):
         stats['top_tweets'], stats['top_users'], stats['type']]
 
 
+
 '''
 	functions to process data
 '''
