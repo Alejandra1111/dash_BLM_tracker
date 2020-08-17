@@ -45,6 +45,32 @@ def clear_filter_keyword(input_container, pos):
         input_container[pos].value = ''
 
 
+def set_task_in_progress_false(input_container, pos, children=[False]):
+    #print(input_container[pos])
+    if 'props' in input_container[pos]:
+        input_container[pos]['props']['children'] = children
+    elif hasattr(input_container[pos],'children'):
+        input_container[pos].children = children
+
+
+def set_picked_version_style(input_container, pos1, pos2):
+    #print(input_container[pos1], input_container[pos2])
+    if 'props' in input_container[pos1]:
+        city = input_container[pos1]['props']['value']
+        print(city, input_container[pos2]['props']['style']) 
+        if city=='all': 
+            input_container[pos2]['props']['style'] = {'min-width': '100px', 'display': 'flex'}
+        else:
+            input_container[pos2]['props']['style'] = {'display': 'none'}
+    elif hasattr(input_container[pos1],'value'):
+        city = input_container[pos1].value 
+        print(city, input_container[pos2].style) 
+        if city=='all': 
+            input_container[pos2].style = {'min-width': '100px', 'display': 'flex'}
+        else:
+            input_container[pos2].style = {'display': 'none'}
+
+
 def stat_list(stats):
     return [stats['stat_sentiments'], stats['stat_emotions'], stats['stat_words'], 
         stats['top_tweets'], stats['top_users'], stats['type']]

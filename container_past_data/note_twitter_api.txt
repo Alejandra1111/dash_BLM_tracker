@@ -1,0 +1,25 @@
+  
+curl -u 'uu1q4BEyW1ShU4KO5MjFV0UAG:9vxGtcf36NBHZssv2ymE42qEV3II98VG6kk7syA6lonUbExEmH' \
+  --data 'grant_type=client_credentials' \
+  'https://api.twitter.com/oauth2/token'
+
+
+{"token_type":"bearer","access_token":"AAAAAAAAAAAAAAAAAAAAALD%2FGgEAAAAArv28th0GnB6PkkqOhaCArxyXLP4%3DikixejbthIGGKlgXIUR77W65wC3lrXiucjn3KpqYbWX5VeG4ZF"}
+
+
+# in python
+
+import requests
+from urllib.parse import urlencode
+
+url = 'https://api.twitter.com/1.1/search/tweets.json?'
+
+headers = {
+    'Authorization': 'Bearer AAAAAAAAAAAAAAAAAAAAALD%2FGgEAAAAArv28th0GnB6PkkqOhaCArxyXLP4%3DikixejbthIGGKlgXIUR77W65wC3lrXiucjn3KpqYbWX5VeG4ZF'
+}
+
+search_spec = dict(q='#BlackLivesMatter', lang='en', 
+              until = '2020-08-10', tweet_mode='extended', count=10)
+
+response = requests.get(url + urlencode(search_spec), headers=headers)
+

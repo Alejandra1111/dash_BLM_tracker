@@ -52,6 +52,12 @@ list_timespan1 = [{'label': 'Previous hour', 'value': 'now_1h'},
  {'label': 'Previous Day', 'value': 'yesterday'},
  {'label': 'Previous 7 days', 'value': 'seven_days'}]
 
+archive_dates0 = ['05-27', '05-30', '06-03','06-06','06-10','06-13',
+			 '06-17', '06-20', '06-24', '06-27']
+
+archive_dates = [pd.to_datetime('2020-' + d) for d in archive_dates0]
+
+
 cities = ['Minneapolis','LosAngeles','Denver','Miami','Memphis',
 	          'NewYork','Louisville','Columbus','Atlanta','Washington',
 	          'Chicago','Boston','Oakland','StLouis','Portland',
@@ -91,7 +97,8 @@ def input_container_children(
 	picked_city='all', picked_version=1,
 	picked_datetime=str(latest_datatime_d_dt),
 	picked_hour=latest_datatime_hour,
-	filter_keyword='', n_clicks=0):
+	filter_keyword='', n_clicks=0,
+	task_in_progress=False):
 	return [html.Label('Select City:', 
 				style={'margin': '5px 10px 5px 0'}),
 			dcc.Dropdown(id='picked_city',
@@ -126,20 +133,29 @@ def input_container_children(
 			),
 			html.Button('Filter', id='filter_submit',
 				n_clicks = n_clicks,
-				style = {'padding': '0 20px'})
+				style = {'padding': '0 20px'}),
+			# hidden data
+			html.Div(id= 'task_in_progress', 
+				style={'display': 'none'}, children = [task_in_progress])
 			]
 
 input_container0 = input_container_children()
+idx_task_in_progress = len(input_container0) - 1 
 idx1 = [ item.id=='filter_keyword' if hasattr(item, 'id') else False for item in input_container0]
 idx_filter_keyword = np.array(range(len(input_container0)))[idx1][0]
+idx2 = [ item.id=='picked_city' if hasattr(item, 'id') else False for item in input_container0]
+idx_picked_city = np.array(range(len(input_container0)))[idx2][0]
+idx3 = [ item.id=='picked_version' if hasattr(item, 'id') else False for item in input_container0]
+idx_picked_version = np.array(range(len(input_container0)))[idx3][0]
 
 
 input_names = ['picked_city', 'picked_version', 'picked_datetime',
 				'picked_hour', 'filter_keyword', 'filter_submit']
 
 hidden_data = ['hidden_latest_datatime', 'picked_city_extended', 
-			 'stat_sentiments', 'stat_emotions',
-			 'stat_words','top_tweets', 'top_users', 'stat_type']
+			 'picked_date_extended', 'stat_sentiments', 'stat_emotions',
+			 'stat_words','top_tweets', 'top_users', 'stat_type',
+			 'stat_triggered_context']
 
 app.layout = html.Div(
 	children = [
@@ -158,7 +174,8 @@ app.layout = html.Div(
 		html.Div(id='dynamic-input-container', 
 			children=input_container_children(
 				picked_datetime=str(latest_datatime_d_dt),
-				picked_hour=latest_datatime_hour),
+				picked_hour=latest_datatime_hour,
+				task_in_progress=True),
 			style = {'display': 'flex', 'flex-flow': 'row wrap', 'align-items': 'center'}
 			),
 		html.Div(id='dynamic-note-container', 
@@ -192,7 +209,7 @@ def load_current_data():
 	#threading.Timer(600, load_current_data).start()
 	print('Updating current data for evey 10 min:')
 
-	result = client.invoke(FunctionName='test_current_BLM_stat', #'BLM_current_data',
+	result = client.invoke(FunctionName= 'BLM_current_data', # 'test_current_BLM_stat'
 	                InvocationType='RequestResponse',                                      
 	                Payload='{}')
 
@@ -282,14 +299,44 @@ def update_current_data(n_intervals):
 	load_current_data()
 	return latest_datatime
 
+
 # update options for picked_hour 
 @app.callback(
 	Output('picked_hour','options'),
-	[Input('picked_datetime', 'date')]
+	[Input('stat_type','children')],
+	[State('picked_datetime', 'date')]
 	)
-def set_hour_to_max(date):
-	max_hour = latest_datatime_hour+1 if date == str(latest_datatime_d_dt) else 24
+def set_hour_to_max(stat_type, date):
+	max_hour = latest_datatime_hour+1 if str(date) == str(latest_datatime_d_dt) else 24
 	return [{'label': str(h) + ':00', 'value':h} for h in range(max_hour)]
+
+
+# check and adjust date if it is before 7/1 
+@app.callback(
+	[Output('picked_date_extended','children'),
+	 Output('picked_city', 'value'),
+	 Output('picked_version', 'value')
+	],
+	[Input('picked_datetime', 'date')],
+	[State('picked_city', 'value'),
+	 State('picked_version', 'value'),
+	 State('task_in_progress', 'children')]
+	)
+def date_check(date, city, version, task_in_progress):
+	print('In date_check(): checking to use archived data for ', date)
+	if task_in_progress[0]==False: PreventUpdate()
+	date = pd.to_datetime(date)
+	if date <= pd.to_datetime('2020-07-01'):
+		absdiff = [date - t if date - t >= pd.Timedelta(0, unit='h') else t - date 
+					 for t in archive_dates]
+		date2 = archive_dates[absdiff.index(min(absdiff))].to_pydatetime()
+		city2 = 'all'
+		version2 = 1
+	else:
+		date2 = date 
+		city2 = city
+		version2 = version
+	return [date2, city2, version2]
 
 
 # update timespan lists
@@ -310,6 +357,7 @@ for item_id in ['topwords_timespan', 'topusers_timespan', 'toptweets_timespan']:
 	Input('picked_version','value')]
 	)
 def city_extended0(city, version):
+	print('In city_extended0():', city, version)
 	if city=='all':
 		city_extended = city + '_v' + str(version) 
 		return [city_extended, {'min-width': '100px', 'display': 'flex'}]
@@ -321,23 +369,27 @@ def city_extended0(city, version):
 # generate a note for the user on what the app is doing
 @app.callback(
 	Output('note_filter','children'),
-	[Input('filter_keyword','value'),
+	[Input('task_in_progress', 'children'),
+	 Input('filter_keyword','value'),
 	 Input('filter_submit', 'n_clicks'),
-	 Input('picked_city','value'),
-	 Input('picked_version','value'),
-	 Input('picked_datetime','date')]
+	 Input('picked_city_extended', 'children'),
+	 Input('picked_datetime','date')],
+	 [State('picked_city','value'),
+	 State('picked_version','value')]
 	)
-def update_note_filter(filter_keyword, n_clicks, city, version, date):
+def update_note_filter(task_in_progress, filter_keyword, n_clicks, 
+	city_extended, date, city, version):
 	context = dash.callback_context.triggered[0]['prop_id'].split('.')[0]
 	if context =='': return None
 	print('updating note by trigger', context) 
-
 	if context=='filter_keyword':
 		str1 = 'Please note: filtering data <b>will take some time</b>. Press <b>"Filter"</b> to proceed.'
 	elif context=='filter_submit':
 		str1 = '<b>Please wait</b>: app is accessing <b>raw data</b>, filtering, and re-calculating statistics... This takes time.'
-	else:
+	elif task_in_progress[0]:
 		str1 = '<b>Please wait</b>: app is loading statistics...'
+	else:
+		return None
 	return [html.Iframe(srcDoc=str1, sandbox='',
 			style={'height': '30px', 'width':'950px', 
 				'margin': '0px 2px 2px 0px', 'border-radius': '5px',
@@ -352,17 +404,19 @@ def update_note_filter(filter_keyword, n_clicks, city, version, date):
 	[Input('stat_type','children')],
 	[State('picked_city', 'value'),State('picked_datetime','date'),
 	State('picked_hour','value'), State('filter_keyword','value'),
-	State('picked_version','value')]
+	State('picked_version','value'), State('picked_date_extended','children')]
 	)
-def return_data_descripton(stat_type, city, date, hour, filter_keyword, picked_version):
+def return_data_descripton(stat_type, city, date, hour, filter_keyword, picked_version, date_extended):
 	city_str = 'All Cities' if city=='all' else city_name_add_space(city)
 	if city=='all': city_str = city_str + ' (2% data sample Version <b>' + str(picked_version) + ')</b>'
-	str1 = 'Selected data are for <b>' + city_str + '</b> on <b>' + str(date)[:10] + '</b>, <b>' + str(hour) + ':00 CST</b>' 
+	str1 = 'Selected data are for <b>' + city_str + '</b> on <b>' + str(date_extended)[:10] + '</b>, <b>' + str(hour) + ':00 CST</b>' 
 	print(stat_type)
 	prev_type = stat_type if stat_type is not None else 'none'
 	if prev_type == 'filtered stats': 
 		str1 = str1 + ', filtered for tweets containing word "<b>' + filter_keyword + '</b>"'
-	return html.Iframe(srcDoc=str1 +'.', sandbox='',
+	str1 = str1 +'.'
+	if pd.to_datetime(date) < pd.to_datetime('2020-07-01'): str1 = str1 + ' Note: the nearest archived date available is used.' 
+	return html.Iframe(srcDoc=str1, sandbox='',
 		style={'height': '30px', 'width':'950px', 
 			'margin': '0px 2px 2px 0px', 'border-radius': '5px',
     		'padding': '5px', 'color': '#23272a',
@@ -373,16 +427,35 @@ def return_data_descripton(stat_type, city, date, hour, filter_keyword, picked_v
 # disable user inputs while processing data
 @app.callback(
 	[Output(inputid,'disabled') for inputid in input_names],
-	[Input('filter_submit','n_clicks'),
-	Input('picked_city','value'),
-	Input('picked_version','value'),
-	Input('picked_datetime','date')]
+	[
+	# Input('filter_submit','n_clicks'),
+	# Input('picked_city_extended','children'),
+	# Input('picked_datetime', 'date'),
+	Input('task_in_progress', 'children')]
 	)
-def disable_inputs(n_clicks, city, version, date):
-	context = dash.callback_context.triggered[0]['prop_id'].split('.')[0]
-	if context =='': return [False for i in input_names]
-	print('disabling inputs while processing data')	
+def disable_inputs(#n_clicks, city, date, 
+	task_in_progress):
+	#context = dash.callback_context.triggered[0]['prop_id'].split('.')[0]
+	contexts = [x['prop_id'].split('.')[0] for x in dash.callback_context.triggered]
+	if (contexts ==['']) | (task_in_progress[0]==False): return [False for i in input_names]
+	print('disabling inputs while processing data, trigger:', contexts)
 	return [True for i in input_names]	
+
+
+@app.callback(
+	[Output('task_in_progress', 'children'),
+	Output('stat_triggered_context', 'children')
+	],
+	[
+	Input('picked_city_extended','children'),
+	Input('picked_date_extended','children'),
+	Input('filter_submit','n_clicks'),
+	Input('picked_hour','value')]
+	)
+def set_task_in_progress(city, date, filter, hour):
+	print('In set_task_in_progress()')
+	context = dash.callback_context.triggered[0]['prop_id'].split('.')[0]
+	return [[True], context]
 
 
 # load selected statistics 
@@ -396,12 +469,12 @@ def disable_inputs(n_clicks, city, version, date):
 	Output('stat_type','children'),
 	Output('dynamic-input-container', 'children'),
 	Output('dynamic-note-container', 'children')],
+	[Input('task_in_progress', 'children')],
 	[
-	Input('picked_city_extended','children'),
-	Input('picked_datetime','date'),
-	Input('filter_submit','n_clicks'),
-	Input('picked_hour','value')],
-	[
+	State('stat_triggered_context', 'children'),
+	State('picked_city_extended','children'),
+	State('picked_date_extended','children'),
+	State('picked_hour','value'),
 	State('filter_keyword','value'),
 	State('picked_city','value'),
 	State('picked_version','value'),
@@ -415,22 +488,23 @@ def disable_inputs(n_clicks, city, version, date):
 	State('stat_type','children'),
 	]
 	) 
-def pick_stat_city_date(city, date, filter_submit, hour, 
+def pick_stat_city_date(
+	task_in_progress, stat_triggered_context, city, date, hour,
 	filter_keyword, city0, city_all_version, input_container, note_container, 
 	stat_sentiments, stat_emotions, stat_words, top_tweets, top_users, stat_type):
+	
 	print('In pick_stat_city_date():')
 	print('selected city date hour: ' + city + ' ' + str(date)[:10] + ' ' + str(hour) + ':00')
 	
-	context = dash.callback_context.triggered[0]['prop_id'].split('.')[0]
-	print('triggered context:', context) 
+	print('triggered context:', stat_triggered_context) 
 
 	if stat_type is not None:
 		# skip to showing stats for the selected hour
 		prev_type = stat_type
-		print(stat_type)
-		if (prev_type != 'current stats') & (context == 'picked_hour'):
+		print('stat_type: ',stat_type)
+		if (prev_type != 'current stats') & (stat_triggered_context == 'picked_hour'):
 			print('skipping picked_stats update')
-			
+			set_task_in_progress_false(input_container, idx_task_in_progress, children=[False]) 
 			return [stat_sentiments, stat_emotions, stat_words, top_tweets, 
 			top_users, stat_type, input_container, note_container]
 
@@ -443,6 +517,7 @@ def pick_stat_city_date(city, date, filter_submit, hour,
 		stats = current_data_cities[city]
 		stats['type'] = 'current stats'
 		clear_filter_keyword(input_container, idx_filter_keyword)
+		set_task_in_progress_false(input_container, idx_task_in_progress, children=[False]) 
 		return stat_list(stats) + [input_container, note_container2]
 
 	# data to pass to AWS Lambda function
@@ -454,8 +529,9 @@ def pick_stat_city_date(city, date, filter_submit, hour,
 		picked_city=city0, picked_version=city_all_version,
 		picked_datetime=date, picked_hour= hour,
 		filter_keyword=filter_keyword, n_clicks=0)
+	set_picked_version_style(input_container2, idx_picked_city, idx_picked_version)
 	
-	if (context=='filter_submit') & (filter_keyword!=''):
+	if (stat_triggered_context=='filter_submit') & (filter_keyword!=''):
 		# filter data and re-calculate stats
 		print('Getting stats for ' + city + ' on ' + date[:10] + ' with filter: ', filter_keyword)
 		result = client.invoke(FunctionName='BLM_stats',

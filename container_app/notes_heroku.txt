@@ -30,6 +30,7 @@ web: gunicorn appfilename:server
 
 heroku create my-dash-app # change my-dash-app to a unique name
 
+git status
 git add . # add all files to git
 git commit -m 'Initial app boilerplate'
 

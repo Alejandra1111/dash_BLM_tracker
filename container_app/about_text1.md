@@ -13,7 +13,7 @@ Please note that "city" data are gathered based on mentioning of city's name in 
 
 The app is currently using **the data collected during the development stage**. There have been some disruptions in the data collection process, so **the data may be incomplete for some dates and hours.**  
 
-**(WORK IN PROGRESS) The data before 7/1 are retroactively gathered** through [Twitter's full archive API](https://developer.twitter.com/en/docs/twitter-api/v1/tweets/search/quick-start/premium-full-archive). It is *expensive* to collect millions of tweets data in this way, and hence the data was gathered only at a limited scope (that is, the data were searched for a two-minute interval for each hour on Wednesdays and Saturdays with the maximum of 500 tweets for each of those two-minute intervals). Therefore, whenever a date before 7/1 is selected, the app directs the user to a nearby data-collection date, and the data is only available for "All Cities Version 1".   
+**The data before 7/1 are retroactively gathered** through [Twitter's full archive API](https://developer.twitter.com/en/docs/twitter-api/v1/tweets/search/quick-start/premium-full-archive). It is *expensive* to collect millions of tweets data in this way, and hence the data was gathered only at a limited scope (that is, the data were searched for a two-minute interval for each hour on Wednesdays and Saturdays with the maximum of 500 tweets for each of those two-minute intervals). Therefore, whenever a date before 7/1 is selected, the app directs the user to a nearby data-collection date, and the data is only available for "All Cities Version 1".   
 
 
 ---

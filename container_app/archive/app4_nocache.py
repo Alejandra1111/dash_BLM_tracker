@@ -103,8 +103,6 @@ app = dash.Dash(__name__, title = 'BLM Tracker',
 
 app.config['suppress_callback_exceptions'] = True
 app.logger.setLevel(logging.ERROR)
-server = app.server
-
 
 def input_container_children(
 	picked_city='all', picked_version=1,
@@ -123,13 +121,12 @@ def input_container_children(
 	    		options = [{'label': 'Version ' + str(i+1), 'value': i+1}
 	    		 for i, ver in enumerate(cities_all)],
 	    		value = picked_version,
-	    		style = {'min-width': '100px'},
 	    		clearable = False),
 			html.Label('Select Date:', 
 				style={'margin': '5px 10px 5px 25px'}),
 			dcc.DatePickerSingle(
 		        id='picked_datetime',
-		        min_date_allowed=dt(2020, 7, 1),
+		        min_date_allowed=dt(2020, 6, 28),
 		        max_date_allowed=latest_datatime_d_dt,
 		        date=picked_datetime,
 	    	),
@@ -173,9 +170,7 @@ app.layout = html.Div(
 			'padding-bottom': '0.5rem', 'margin': '0rem'}
 		),
 		html.Div(id='dynamic-input-container', 
-			children=input_container_children(
-				picked_datetime=str(latest_datatime_d_dt),
-				picked_hour=latest_datatime_hour),
+			children=input_container_children(),
 			style = {'display': 'flex', 'flex-flow': 'row wrap', 'align-items': 'center'}
 			),
 		html.Div(id='dynamic-note-container', 
@@ -278,6 +273,20 @@ for item_id in ['topwords_timespan', 'topusers_timespan', 'toptweets_timespan']:
 	def update_topwords_timespan(date):
 		return list_timespan if date == str(latest_datatime_d_dt) else list_timespan1
 
+# @app.callback(
+# 	Output('topusers_timespan','options'),
+# 	[Input('picked_datetime', 'date')]
+# 	)
+# def update_topusers_timespan(date):
+# 	return list_timespan if date == str(latest_datatime_d_dt) else list_timespan1
+
+# @app.callback(
+# 	Output('toptweets_timespan','options'),
+# 	[Input('picked_datetime', 'date')]
+# 	)
+# def update_topusers_timespan(date):
+# 	return list_timespan if date == str(latest_datatime_d_dt) else list_timespan1
+
 
 # show/hide a version for all cities random sample 
 @app.callback(
@@ -289,7 +298,7 @@ for item_id in ['topwords_timespan', 'topusers_timespan', 'toptweets_timespan']:
 def city_extended(city, version):
 	if city=='all':
 		city_extended = city + '_v' + str(version) 
-		return [city_extended, {'min-width': '100px', 'display': 'flex'}]
+		return [city_extended, {'min-width': '100px'}]
 	else:
 		return [city, {'display': 'none'}]
 
@@ -380,7 +389,7 @@ def disable_inputs(n_clicks, city, version, date):
 def pick_stat_city_date(city, date, filter_submit, hour, 
 	filter_keyword, city0, city_all_version, input_container, note_container, picked_stats):
 	print('In pick_stat_city_date():')
-	print('selected city date hour: ' + city + ' ' + str(date)[:10] + ' ' + str(hour) + ':00')
+	print('selected city date hour' + city + str(date) + str(hour) + ':00')
 	
 	context = dash.callback_context.triggered[0]['prop_id'].split('.')[0]
 	print('triggered context:', context) 
@@ -553,6 +562,5 @@ def update_user_table(picked_stats, timespan, hour):
 
 
 if __name__ == '__main__':
-	port = int(os.environ.get('PORT', 8050))
-	app.run_server(host='0.0.0.0', port=port, debug=True) #, dev_tools_ui=False) #, dev_tools_props_check=False)
-	
+	app.run_server(host='0.0.0.0', port=8050, debug=True) #, dev_tools_ui=False) #, dev_tools_props_check=False)
+
