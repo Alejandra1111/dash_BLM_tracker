@@ -15,5 +15,5 @@ CMD gunicorn --bind 0.0.0.0:$PORT wsgi
 
 WORKDIR /app
 
-CMD ["python3", "app6.py"]
+CMD ["python3", "app7.py"]
 #CMD  tail -f /dev/null 

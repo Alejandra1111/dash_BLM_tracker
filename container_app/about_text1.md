@@ -20,6 +20,11 @@ The app is currently using **the data collected during the development stage**. 
 
 ### App Components
 
+#### Dashboard
+
+The dashboard provides a snapshot of what's going on across different cities in the form of sentiment statistics, ranging from -1 (negative sentiments) to 1 (positive sentiments). The sentiment of a given city is compared with the current overall sentiment across all cities and with the past sentiments of the city.  
+
+
 #### Dataset Selection
 
 The app initially loads summary statistics of data for **all cities**.  **All cities** data are based on **a 2% random sample** of the whole data collected, and hence the app lets you choose a version of the random sample. When you **select a particular city**, the app loads a pre-processed dataset filtered by the city's name in tweet text.  
@@ -52,6 +57,10 @@ The app identifies **the most retweeted tweets** in **a selected timespan** (out
 
 The app identifies **the most retweeted Twitter users** in **a selected timespan** (out of last hour, today, yesterday, past 7 days). 
 
+
+#### Daily Summary Subscription
+
+A user can sign up to receive a daily summary via email. All the information we collect is email address. The daily email is scheduled sometime around 4 to 5 pm CST.  Unsubscribing is done by re-entering the email address, which the app recognizes and changes the subscribe-button into an unsubscribe-button. 
 
 
 --- 

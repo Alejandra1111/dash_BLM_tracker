@@ -2,4 +2,4 @@ build:
   docker:
     web: Dockerfile-dash-app2
 run:
-  web: python app6.py
+  web: python app7.py

@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import plotly.express as px
+from plotly.colors import n_colors
 from collections import Counter
 from wordcloud import WordCloud, ImageColorGenerator
 import matplotlib.pyplot as plt
@@ -57,14 +58,14 @@ def set_picked_version_style(input_container, pos1, pos2):
     #print(input_container[pos1], input_container[pos2])
     if 'props' in input_container[pos1]:
         city = input_container[pos1]['props']['value']
-        print(city, input_container[pos2]['props']['style']) 
+        #print(city, input_container[pos2]['props']['style']) 
         if city=='all': 
             input_container[pos2]['props']['style'] = {'min-width': '100px', 'display': 'flex'}
         else:
             input_container[pos2]['props']['style'] = {'display': 'none'}
     elif hasattr(input_container[pos1],'value'):
         city = input_container[pos1].value 
-        print(city, input_container[pos2].style) 
+        #print(city, input_container[pos2].style) 
         if city=='all': 
             input_container[pos2].style = {'min-width': '100px', 'display': 'flex'}
         else:
@@ -76,11 +77,16 @@ def stat_list(stats):
         stats['top_tweets'], stats['top_users'], stats['type']]
 
 
+def wAvg(df, var_stat ='mean', var_count='count', digits=3):
+    if len(df)==0: return None
+    df.loc[:,'__tmp1'] = df[var_count]/sum(df[var_count])
+    df.loc[:,'__tmp2'] = df[var_stat] * df['__tmp1'] 
+    return df['__tmp2'].agg('sum').round(digits)
 
-'''
-	functions to process data
-'''
 
+def formatInt(df, varnames):
+    for varname in varnames:
+        df[varname] = df[varname].apply(lambda x: f"{x:,}")
 
 
 def fix_datetime(df, timevar='created_at_h'):
@@ -195,6 +201,7 @@ def fig_emotions(df):
     if len(df)==0: return no_data_fig
 
     x_data = df.time
+    # x_data_max = pd.to_datetime(x_data).max()
     y_data = df[['fear','anger','trust','surprise','sadness','disgust','joy']]
 
     names = ['fear','anger','trust','surprise','sadness','disgust','joy']
@@ -219,7 +226,12 @@ def fig_emotions(df):
 
     # Add x-asis range selector 
     fig.update_xaxes(
-        rangeslider_visible=True,
+        # rangeslider_visible=True,
+        # rangeslider_range= [x_data_max - pd.Timedelta(7, unit='d'), x_data_max],
+        # rangeslider=dict(
+        #     visible=True, 
+        #     range =  [x_data_max - pd.Timedelta(7, unit='d'), x_data_max]
+        #     ),
         rangeselector=dict(
             buttons=list([
                 dict(count=1, label="1d", step="day", stepmode="backward"),
@@ -231,7 +243,7 @@ def fig_emotions(df):
                 # dict(count=1, label="1y", step="year", stepmode="backward"),
                 dict(step="all")
             ])
-        )
+        ),
     )
 
     fig.update_layout(
@@ -241,7 +253,7 @@ def fig_emotions(df):
         legend=dict(
             font_size=14,
             x = 0,
-            y = 1.085,
+            y = 1.02,
             
         ),
     )
@@ -526,7 +538,132 @@ def fig_top_users(top_users, subset='now_1h'):
     return fig
 
 
-  
+def fig_dashboard(stats, time):
+    if len(stats)==0: return no_data_fig
+
+    fct_resize = .85
+
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(
+        x= stats.today,
+        y= stats.city,
+        marker=dict(color="#ff8e25", size=18 * fct_resize),
+        mode="markers",
+        name="Today",
+    ))
+
+    fig.add_trace(go.Scatter(
+        x= stats.yesterday,
+        y= stats.city,
+        marker=dict(color="#f6e925", size=14 * fct_resize),
+        mode="markers",
+        name="Yesterday",
+    ))
+
+    fig.add_trace(go.Scatter(
+        x= stats.seven_days,
+        y= stats.city,
+        marker=dict(color="#6ede1f", size=14 * fct_resize),
+        mode="markers",
+        name="Past 7 days",
+    ))
+
+    fig.add_trace(go.Scatter(
+        x= stats.two_weeks,
+        y= stats.city,
+        marker=dict(color="#2593ff", size=14 * fct_resize),
+        mode="markers",
+        name="Past two weeks",
+    ))
+
+
+    fig.update_layout(title="Sentiments ",
+                      xaxis_title="",
+                      yaxis_title="",
+                        width=800 * fct_resize,
+                        height=800 * fct_resize,
+                        margin=dict(l=40, r=40, b=40, t=40),
+                        font=dict(size=15 * fct_resize),
+                      legend=dict(
+                        orientation="h",
+                        font_size=14 * fct_resize,
+                        yanchor="bottom",
+                        y=1.01,
+                        xanchor="right",
+                        x=1
+                        ),
+                        plot_bgcolor='white',
+                     )
+    fig.update_xaxes(showline=False, #linewidth=2, linecolor= '#D3D3D3', 
+                     showgrid=True, gridwidth=1, gridcolor= '#D3D3D3',
+                     zeroline=True, zerolinewidth=2, zerolinecolor='#D3D3D3')
+    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor= 'slategray')
+
+    annotations = []
+    annotations.append(
+        dict(xref='paper', yref='paper',
+            x= -0.3, 
+            xanchor= 'left',
+            y= 1, 
+            yanchor= 'bottom',
+            showarrow=False,
+            text= '({time} CST)'.format(time=str(time))))
+
+    annotations.append(
+        dict(xref='paper', yref='paper',
+            x= 1.05, 
+            xanchor= 'left',
+            y= 0.95, 
+            yanchor= 'bottom',
+            showarrow=False,
+            text= 'Comparisons<br> (mouseover for details)'))
+
+    colors = np.array(n_colors('rgb(200, 0, 0)', 'rgb(255, 200, 200)', 5, colortype='rgb') +
+                     ['rgb(200,200,200)'] +
+                     n_colors('rgb(200, 200, 255)', 'rgb(0, 0, 200)', 5, colortype='rgb'))
+
+    bins = [-1, -0.8, -0.6, -0.4, -0.2, 0.2, 0.4, 0.6, 0.8, 1]
+
+    label_names = ['Difference from All Cities', 'Change from yesterday',
+                  'Change from past 7 days', 'Change from past two weeks']  
+    label_x = [x*0.125 + 1.15 for x in range(4)] 
+
+    def add_plus(x):
+        return '+' + str(x) if x>=0.01 else str(x)
+
+    # add labels on the right_side of the plot
+    for x, labels, name in zip(label_x, 
+                         [stats.diff_from_all, stats.ch_from_yest, 
+                          stats.ch_from_sevend, stats.ch_from_twoweek],
+                        label_names):
+        
+        lab_colors = list(colors[np.digitize(labels, bins)])
+        
+        for y, label, color in zip( stats.city, labels, lab_colors):
+
+            annotations.append(
+                dict(xref='paper', x=x, y=y,
+                      xanchor='right', yanchor='middle',
+                      text=add_plus(label),
+                      hovertext = y + '<br>' + name + ': '+ add_plus(label),
+                      font=dict(size=16 * fct_resize,
+                                 color = color),            
+                      showarrow=False)
+            )
+
+               
+    fig.update_layout(
+        annotations = annotations,
+        #autosize=False,
+        margin=dict(
+            #autoexpand=False,
+            r=230 * fct_resize,
+        )
+        )     
+    #fig.show()
+    return fig 
+
+
     
 
 
