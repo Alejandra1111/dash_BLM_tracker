@@ -18,7 +18,6 @@ from math import isnan
 import dash_html_components as html
 
 
-
 '''
 	misc unctions 
 '''
@@ -36,45 +35,6 @@ def city_value(city_label_value):
 
 def city_date(city, date):
 	return str(city) + '#' + str(date)
-
-
-def clear_filter_keyword(input_container, pos):
-    #print(input_container[pos])
-    if 'props' in input_container[pos]:
-        input_container[pos]['props']['value'] = ''
-    elif hasattr(input_container[pos],'value'):
-        input_container[pos].value = ''
-
-
-def set_task_in_progress_false(input_container, pos, children=[False]):
-    #print(input_container[pos])
-    if 'props' in input_container[pos]:
-        input_container[pos]['props']['children'] = children
-    elif hasattr(input_container[pos],'children'):
-        input_container[pos].children = children
-
-
-def set_picked_version_style(input_container, pos1, pos2):
-    #print(input_container[pos1], input_container[pos2])
-    if 'props' in input_container[pos1]:
-        city = input_container[pos1]['props']['value']
-        #print(city, input_container[pos2]['props']['style']) 
-        if city=='all': 
-            input_container[pos2]['props']['style'] = {'min-width': '100px', 'display': 'flex'}
-        else:
-            input_container[pos2]['props']['style'] = {'display': 'none'}
-    elif hasattr(input_container[pos1],'value'):
-        city = input_container[pos1].value 
-        #print(city, input_container[pos2].style) 
-        if city=='all': 
-            input_container[pos2].style = {'min-width': '100px', 'display': 'flex'}
-        else:
-            input_container[pos2].style = {'display': 'none'}
-
-
-def stat_list(stats):
-    return [stats['stat_sentiments'], stats['stat_emotions'], stats['stat_words'], 
-        stats['top_tweets'], stats['top_users'], stats['type']]
 
 
 def wAvg(df, var_stat ='mean', var_count='count', digits=3):
@@ -102,12 +62,9 @@ def fix_user_id(df):
     df.user_id = df.user_id.astype(str)    
 
 
-
-
 '''
     functions to generate plots
 '''
-
 
 
 no_data_fig = {"layout": {
@@ -349,6 +306,7 @@ def clean_top_tweets(top_tweets):
     df['URL'] = df['URL'].apply(lambda x:
         '[' + str(x) + '](' +  str(x) + ')'
         )
+    formatInt(df, ['Followers', 'Retweets Selected', 'Retweets Total'])
     return df
 
 col_widths_toptweets = [
@@ -397,7 +355,7 @@ def clean_top_users(top_users):
     df['User Description'] = df['User Description'].apply(lambda x: 
         str(x).replace('"','').replace("'",'')
         )
-
+    formatInt(df, ['Followers','Retweets'])
     return df
 
 col_widths_topusers = [

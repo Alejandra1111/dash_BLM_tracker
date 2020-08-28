@@ -9,6 +9,4 @@
 
 ---
 
-Created by: **Kota Minegishi** 
-
-Last Modified: **8/26/2020**
+Last Modified: **8/28/2020**
