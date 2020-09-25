@@ -1,24 +1,16 @@
 import pandas as pd
 
 from utilities import time_now_pandas, append_a_content_to_file, \
-    append_and_drop_duplicates, append_a_list_to_csv_file 
+    append_and_drop_duplicates, append_a_list_to_csv_file, df_to_json
 from filename_utils import * 
 from newTweetData import *
 
-
-def set_globals():
-    global data_source, data_dest, current_time, current_time_str
-    data_source = 'python/tests/unit/fixtures/'
-    data_dest = 'python/tests/unit/fixtures/'
-
-    current_time = time_now_pandas()
-    # !! overwrite time during code dev
-    current_time = pd.to_datetime('2020-07-09 23:59')
-    current_time_str = str(current_time)
+from globals import data_source, data_dest, current_time, current_time_str, \
+    to_json_args, read_json_args 
 
 
 def process_new_data():
-    global data_source, data_dest, current_time, current_time_str
+    print(f'\nProcessing new tweet data:{"-"*20}\n')
 
     append_a_content_to_file(
         content = '\n'+current_time_str,
@@ -52,8 +44,6 @@ def process_new_data():
 
 
 def get_new_data_filenames(verbose=True):
-    global data_source, data_dest
-
     # original-type tweet data files:
     files_original = FilenameGatherer(new_file_location = data_source, 
                                       new_file_prefix = "BLM_tweet_original_*/*/*/*/*", 
@@ -80,17 +70,14 @@ def get_new_data_filenames(verbose=True):
 
 
 def load_and_append_retweet_data(rt):
-    global data_source, data_dest
-
     # load stats from cumulative retweet to match with new data
-    retweets = pd.read_json(data_dest + "data_cumulative/retweet/2020_all_retweets.json",
-         lines=True, orient='records')
+    retweets = pd.read_json(data_dest + "data_cumulative/retweet/2020_all_retweets.json", **read_json_args)
     rt_sentiments = pd.read_csv(data_dest + 
         'data_cumulative/retweet/2020_all_sentiments.csv')
     rt_emotions = pd.read_csv(data_dest + 
         'data_cumulative/retweet/2020_all_emotions.csv')
     rt_words = pd.read_json(data_dest + 
-        'data_cumulative/retweet/2020_all_words.json', orient='records', lines=True)
+        'data_cumulative/retweet/2020_all_words.json',  **read_json_args)
 
     if len(rt.df):
         retweets = append_and_drop_duplicates(retweets, rt.df, 'RT_id')
@@ -100,8 +87,10 @@ def load_and_append_retweet_data(rt):
 
          # !! use psedo-filenames during dev  
         file_rt_loc = 'data_cumulative/retweet/'
-        retweets.to_json(f'{data_dest}{file_rt_loc}2020_retweets.json', orient='records', lines=True)
-        rt_words.to_json(f'{data_dest}{file_rt_loc}2020_rt_words.json', orient='records', lines=True)
+        df_to_json(retweets, f'{data_dest}{file_rt_loc}2020_retweets.json',
+            vars_to_str=['created_at', 'created_at_h'], **to_json_args)
+        df_to_json(rt_words, f'{data_dest}{file_rt_loc}2020_rt_words.json',
+             vars_to_str='created_at_h', **to_json_args)
         rt_sentiments.to_csv(f'{data_dest}{file_rt_loc}2020_rt_sentiments.csv', index=False) 
         rt_emotions.to_csv(f'{data_dest}{file_rt_loc}2020_rt_emotions.csv', index=False) 
         print('Updated retweet data: retweet, retweet-words, sentiments, and emotions.')
@@ -110,13 +99,14 @@ def load_and_append_retweet_data(rt):
 
 
 def save_new_data(new_sentiments, new_emotions, new_words, ori):
-    global data_dest, current_time_str
     # save new data 
     time_as_filename = 'created_at_' + current_time_str.replace(" ","_")
     new_sentiments.to_csv(f'{data_dest}data_cumulative/sentiments/{time_as_filename}.csv', index=False)
     new_emotions.to_csv(f'{data_dest}data_cumulative/emotions/{time_as_filename}.csv', index=False)
-    new_words.to_json(f'{data_dest}data_cumulative/words/{time_as_filename}.json', orient='records', lines=True)
-    ori.df.to_json(f'{data_dest}data_cumulative/original/{time_as_filename}.json', orient='records', lines=True)
+    df_to_json(new_words, f'{data_dest}data_cumulative/words/{time_as_filename}.json', 
+        vars_to_str ='created_at_h', **to_json_args)
+    df_to_json(ori.df, f'{data_dest}data_cumulative/original/{time_as_filename}.json',
+        vars_to_str =['created_at', 'created_at_h'], **to_json_args)
     print('Added new tweet data: sentiments, emotions, words, and original.')
 
 

@@ -1,0 +1,10 @@
+id,created_at_h,fear,anger,anticip,trust,surprise,positive,negative,sadness,disgust,joy
+1279297880789041152,2020-07-04 00:00:00,False,False,True,False,False,True,False,False,False,True
+1279396954649382912,2020-07-04 06:00:00,False,False,False,False,False,True,False,False,False,False
+1279407546722398208,2020-07-04 07:00:00,True,True,True,True,True,True,True,True,True,True
+1279407546722398208,2020-07-04 07:00:00,,,,,,,,,,
+1279417105063043072,2020-07-04 08:00:00,False,False,False,False,False,True,False,False,False,False
+1279420630073520128,2020-07-04 08:00:00,False,False,False,False,False,True,False,False,False,False
+1279420630073520128,2020-07-04 08:00:00,,,,,,,,,,
+1279533882791034880,2020-07-04 15:00:00,True,False,False,False,False,True,False,False,False,False
+1279574504721825792,2020-07-04 18:00:00,True,False,False,False,False,False,True,True,False,False

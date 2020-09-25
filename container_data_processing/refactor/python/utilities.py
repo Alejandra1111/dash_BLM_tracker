@@ -5,7 +5,8 @@ from datetime import datetime
 from dateutil import tz
 import pytz
 from collections import Counter
-
+import re 
+from copy import deepcopy
 
 def str_contains_all_strings_in_list(str1, list1):
     return all([str1.find(x)>0 for x in list1])
@@ -48,7 +49,7 @@ def keep_files_within_x_days_old(
 def convert_floats(df, target_dtype='float32', include=['float64'], exceptions=None):
     floats = df.select_dtypes(include=include).columns.tolist()
     if exceptions:
-        floats  = [ x for x in floats if x not in list(floats)]
+        floats  = [ x for x in floats if x not in list(exceptions)]
     df[floats] = df[floats].astype(target_dtype)
     return None
 
@@ -58,23 +59,22 @@ def path_ends_with_slash(path):
     else:
         return path + '/'
 
-def filter_df_by_id0(df, id_varname, ids):
-    df_ids = pd.DataFrame(ids).set_index(0)
-    df_filtered = (df.set_index(id_varname)
-         .join(df_ids, how='inner')
-         .reset_index().rename(columns={'index':id_varname})
-        )
-    return df_filtered 
 
 def filter_df_by_id(df, id_varname, ids):
     ids = [id for id in ids if id in list(df[id_varname])]
     if len(ids)==0: return pd.DataFrame(columns=df.columns)
     return df.set_index(id_varname).loc[ids].reset_index()
-    
+
+def filter_df_by_id0(df, id_varname, ids): # older implementation of filter_df_by_id
+    df_ids = pd.DataFrame(ids).set_index(0)
+    df_filtered = (df.set_index(id_varname)
+         .join(df_ids, how='inner')
+         .reset_index().rename(columns={'index':id_varname})
+        )
+    return df_filtered     
 
 def isBytes(obj):
     return type(obj)==type(b'abc')
-
 
 def isStr(x): return type(x)==str
 
@@ -160,9 +160,9 @@ def time_now_pandas(tzname='America/Denver'):
 
 class PlaceHolder(): pass
 
-def data_files_to_df_json(files, orient='records', lines=False):
+def data_files_to_df_json(files, **kwargs):
     df = []
-    [ df.append(pd.read_json(file, orient=orient, lines=lines)) for file in files ]
+    [ df.append(pd.read_json(file, **kwargs)) for file in files ]
     df = pd.concat(df, ignore_index=True)
     return df
 
@@ -195,9 +195,90 @@ def append_a_content_to_file(content, file):
         f.write(content)
 
 def append_a_list_to_csv_file(list, varname, filename):
-    (pd.DataFrame(list, columns = {varname})
+    (pd.Series(list, name = varname)
      .to_csv(filename, mode='a', header=False, index=False)
     )
     
+def pass_obj_and_args_to_fun(obj, fun, *args, **kwargs):
+    def newfun(obj): return fun(obj, *args, **kwargs)
+    return newfun
 
+def apply_fun_to_dict_data(dict, fun, *args, **kwargs):
+    return pd.DataFrame(dict).agg(fun, *args, **kwargs)
 
+def get_unique_dates_in_var(df, varname):
+    dates = pd.to_datetime(df[varname]).dt.floor('d').unique()
+    dates_str = [str(date)[:10] for date in dates]
+    return dates, dates_str
+
+def filter_df_by_date(df, varname, date):
+    tmp_df = deepcopy(df)
+    varname_d = f'_{varname}_d'
+    tmp_df[varname_d] = pd.to_datetime(tmp_df[varname]).dt.floor('d')
+    filtered_df = tmp_df[tmp_df[varname_d] == pd.to_datetime(date)].drop(columns = [varname_d])
+    return filtered_df
+
+def df_to_json(df, filename, vars_to_str=[], vars_to_numeric=[], **kwargs):
+    df_copy = deepcopy(df)
+    if vars_to_str: convert_vars_to_str(df_copy, vars_to_str)
+    if vars_to_numeric: convert_vars_to_numeric(df_copy, vars_to_numeric)
+    df_copy.to_json(filename, **kwargs)
+    return None 
+
+def append_to_json(filename, df, **kwargs):
+    df0 = pd.read_json(filename,  **kwargs)
+    return df0.append(df)
+
+def df_saver_json(df, filename, new_file=True, vars_to_str=[], vars_to_numeric=[], 
+    read_kwargs=dict(), save_kwargs=dict()):
+    if not new_file:
+        df = append_to_json(filename, df, **read_kwargs)
+    df_to_json(df, filename, vars_to_str, vars_to_numeric, **save_kwargs)
+    
+def df_saver_csv(df, filename, new_file=True, **kwargs):
+    mode = 'w' if new_file else 'a'
+    header = True if new_file else False
+    df.to_csv(filename, index=False, header=header, mode=mode, **kwargs)
+
+def get_a_var_from_jsonfile(varname, file, orient='records', lines=True):
+    return pd.read_json(file, orient=orient, lines=lines)[varname]
+    
+def remove_punct_from_tokens(tokens):
+    return [re.sub('[.,!?#]','', token) for token in tokens] 
+
+def match_type_for_list(valuelist, obj_type):
+    if type(valuelist[0]) != obj_type:
+        return [obj_type(x) for x in valuelist]
+    else:
+        return valuelist
+
+def mark_var_in_valuelist(df, var, valuelist):
+    if len(df) and list(valuelist):   
+        valuelist = match_type_for_list(valuelist, type(df[var][0]))
+        return df[var].apply(lambda x: x in valuelist)
+    else:
+        [False] * len(df)
+
+def keep_if_var_in_valuelist(df, varname, valuelist):
+    valuelist = list(valuelist)
+    if len(df) and valuelist: 
+        valuelist = match_type_for_list(valuelist, type(df[varname][0]))
+        return (df.set_index(varname)
+                .join(pd.DataFrame(data={varname: valuelist}).set_index(varname), how='inner')
+                .reset_index())
+    else:
+        return pd.DataFrame(columns=df.columns)
+
+def remove_items_from_a_list(list, items):
+    return [item for item in list if item not in tolist(items)]
+
+def subset_var_startswith(df, varname, startswith):
+    if len(df)==0: return df
+    return df[df[varname].apply(lambda x: x.startswith(startswith))]
+
+def get_hour_value_from_timestamps(timestamps):
+    return [datetime.hour for datetime in pd.to_datetime(timestamps)]
+
+def get_a_set_str_startswith(df, varname, startswith):
+    return [x for x in set(df[varname]) if x.startswith(startswith)]
+  

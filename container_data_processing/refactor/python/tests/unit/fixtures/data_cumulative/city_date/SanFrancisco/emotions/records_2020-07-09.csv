@@ -1,0 +1,23 @@
+id,created_at_h,fear,anger,anticip,trust,surprise,positive,negative,sadness,disgust,joy
+1281181493302366208,2020-07-09 05:00:00,False,False,False,False,False,True,True,False,False,True
+1281189023185342464,2020-07-09 05:00:00,True,True,False,True,True,True,True,False,False,False
+1281249438502195200,2020-07-09 09:00:00,True,True,False,True,True,True,True,False,False,False
+1281253659133820928,2020-07-09 09:00:00,True,True,False,False,False,False,True,False,False,False
+1281257613951467520,2020-07-09 10:00:00,False,False,False,False,True,True,True,False,False,False
+1281258779812589568,2020-07-09 10:00:00,True,False,True,False,False,False,True,False,True,False
+1281269644469301248,2020-07-09 10:00:00,True,False,False,False,False,True,False,False,True,False
+1281275333098889216,2020-07-09 11:00:00,False,True,False,False,False,False,True,False,False,False
+1281284063698006016,2020-07-09 11:00:00,False,False,False,False,True,True,True,False,False,False
+1281284063698006016,2020-07-09 11:00:00,,,,,,,,,,
+1281297882373435392,2020-07-09 12:00:00,False,False,False,False,False,True,False,False,False,False
+1281297882373435392,2020-07-09 12:00:00,,,,,,,,,,
+1281304363957436416,2020-07-09 13:00:00,False,False,False,False,False,True,False,False,False,False
+1281304363957436416,2020-07-09 13:00:00,,,,,,,,,,
+1281318222541848576,2020-07-09 14:00:00,False,False,False,True,False,False,False,False,False,False
+1281324255599198208,2020-07-09 14:00:00,False,False,False,True,False,True,False,False,False,False
+1281348706625826816,2020-07-09 16:00:00,False,False,False,False,False,True,False,False,False,False
+1281383633949831168,2020-07-09 18:00:00,False,False,False,True,False,True,False,False,False,False
+1281385711648694272,2020-07-09 18:00:00,False,False,False,True,False,False,False,False,False,False
+1281389758329962496,2020-07-09 18:00:00,False,False,False,False,False,True,False,False,False,False
+1281389758329962496,2020-07-09 18:00:00,True,True,False,False,False,True,True,False,False,False
+1281436879536062464,2020-07-09 21:00:00,False,False,False,False,False,False,True,False,False,False

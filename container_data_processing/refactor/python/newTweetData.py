@@ -10,6 +10,9 @@ from utilities import data_files_to_df_json, convert_time, add_time_floored_at_h
     keep_if_var_has_positive_length, convert_vars_to_str
 from token_utils import *
 
+from globals import read_json_args
+
+
 
 class NewTweetData():    
     def __init__(self, new_filenames, id_varname, current_time):
@@ -21,7 +24,7 @@ class NewTweetData():
     @cached_property
     def df(self): 
         if not self.new_filenames: return pd.DataFrame()
-        df = data_files_to_df_json(self.new_filenames, orient='records', lines=True)
+        df = data_files_to_df_json(self.new_filenames, **read_json_args)
         convert_time(df, self.current_time, 'US/Mountain', varname='created_at')
         add_time_floored_at_hour(df, floored_varname='created_at_h')
         self.add_tokens_for_text_and_quoted_text(df)

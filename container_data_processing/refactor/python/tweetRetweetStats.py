@@ -65,8 +65,8 @@ def calc_top_users(ori_data, cum_rt_data, subset_name='', num_top_users=15):
 
 
 def add_subset_name(df, subset_name):
-    df['subset_name'] = subset_name
-    return bring_a_column_first(df, 'subset_name')
+    df['subset'] = subset_name
+    return bring_a_column_first(df, 'subset')
 
 
 class TopTweetsCalculator:
@@ -91,10 +91,10 @@ class TopTweetsCalculator:
     
     @cached_property
     def top_RT_data(self):
-        top_RT_ids_no_missing = [id for id in self.top_RT_ids.index if id in list(self.cum_rt_data.RT_id)]
+        top_RT_ids_data_in_retweet = [id for id in self.top_RT_ids.index if id in list(self.cum_rt_data.RT_id)]
         top_RT_data = (self.cum_rt_data[['RT_id','user_name','followers_count','text','t_co','tags']]
                        .set_index('RT_id')
-                       .loc[top_RT_ids_no_missing]
+                       .loc[top_RT_ids_data_in_retweet]
                        )
         if len(top_RT_data)==0: return None
         top_RT_data = drop_duplicates_index(top_RT_data, keep='last') 
@@ -104,7 +104,7 @@ class TopTweetsCalculator:
     def top_RT_stats(self):
         top_RT_stats = (self.ori_data[['RT_id','RT_retweet_count']]
                         .set_index('RT_id')
-                        .loc[self.top_RT_ids.index]
+                        .loc[list(self.top_RT_ids.index)]
                         .reset_index()
                         .groupby('RT_id')
                         .agg(['count', 'max'])
@@ -157,7 +157,7 @@ class TopUsersCalculator:
     @cached_property
     def userdata_of_top_RT(self):
         userdata_of_top_RT = (
-            self.ori_data[['RT_id']].set_index('RT_id').loc[self.top_RT_ids.index]  
+            self.ori_data[['RT_id']].set_index('RT_id').loc[list(self.top_RT_ids.index)]  
             .join(self.cum_rt_data[['RT_id','user_id','user_name','user_description',
                                     'followers_count','following_count']].set_index('RT_id'),
                   how='inner')
@@ -174,7 +174,7 @@ class TopUsersCalculator:
     @cached_property
     def top_users_data(self):
         top_users_data = (
-            self.userdata_of_top_RT.set_index('user_id').loc[self.top_users_ids.index]
+            self.userdata_of_top_RT.set_index('user_id').loc[list(self.top_users_ids.index)]
             .reset_index()
             .drop_duplicates(subset = 'user_id', keep='last')
         )

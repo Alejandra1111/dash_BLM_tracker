@@ -12,7 +12,7 @@ class BatchDfProcessor:
     def __init__(self, df, batch_size):
         self.df = df
         self.batch_size = batch_size
-        self.batches = np.floor((len(df)/batch_size))
+        self.batches = max(1, np.floor((len(df)/batch_size)))
         self.last_batch_size = len(df) % batch_size
         self.processed_df = pd.DataFrame()
     
@@ -22,7 +22,8 @@ class BatchDfProcessor:
         i_end = self.batch_size
         processed = []
         while b < self.batches:
-            batch_result = func(self.df[i_beg:i_end], *args, **kwargs)
+            batch_result = func(self.df.iloc[i_beg:i_end], *args, **kwargs)
+            if not len(batch_result): print(batch_result)
             processed.append(batch_result)
             b += 1
             i_beg += self.batch_size
@@ -55,7 +56,7 @@ def df_words_sample_and_batch_sum(df_words, batch_size = 100, num_to_sample = 10
         df = words.sample(n=num_to_sample)
 
     batch_df_processor = BatchDfProcessor(df, batch_size)
-    batch_df_processor.process(sum_df_counter_most_common, 
+    batch_df_processor.process(func = sum_df_counter_most_common, 
                                newvarname='token_counter', 
                                num_most_common=200)
         
