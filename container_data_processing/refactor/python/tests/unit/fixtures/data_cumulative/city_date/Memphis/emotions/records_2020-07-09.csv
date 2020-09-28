@@ -1,5 +1,0 @@
-id,created_at_h,fear,anger,anticip,trust,surprise,positive,negative,sadness,disgust,joy
-1281302822919778304,2020-07-09 13:00:00,False,False,False,False,False,True,True,False,False,False
-1281320813644275712,2020-07-09 14:00:00,False,False,False,False,False,True,False,False,False,False
-1281338887470641152,2020-07-09 15:00:00,False,False,False,True,False,True,False,False,False,False
-1281404350531883008,2020-07-09 19:00:00,False,False,False,True,False,True,True,False,False,False

@@ -1,0 +1,19 @@
+FROM python:3.8-slim
+
+COPY process_data3.py /process_data/
+COPY process_city_data.py /process_data/
+COPY processing_helpers.py /process_data/
+COPY summarizing_helpers.py /process_data/
+COPY city_data_helpers.py /process_data/
+
+COPY requirements_process_data.txt /tmp
+
+RUN pip3 install -r /tmp/requirements_process_data.txt
+
+RUN apt update
+RUN apt install vim -y
+
+WORKDIR /process_data
+
+#CMD ["python3", "process_data3.py"]
+CMD  tail -f /dev/null 

@@ -20,6 +20,9 @@ docker ps
 docker exec -it f20  bash
 
 
+docker build -f Dockerfile-process-data -t data-processing  .
+docker run -d -v /mounted:/data data-processing
+
 
 docker build -f Dockerfile-dash-app -t dash-app  .
 docker run -d -v /mounted:/data -p 8050:8050 dash-app 
