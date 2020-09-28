@@ -1,0 +1,23 @@
+id,created_at_h,fear,anger,anticip,trust,surprise,positive,negative,sadness,disgust,joy
+1280021715129716736,2020-07-06 00:00:00,,,,,,,,,,
+1280082815061819392,2020-07-06 04:00:00,False,False,False,False,False,False,False,False,True,False
+1280083258227728384,2020-07-06 04:00:00,True,True,True,True,True,True,True,True,True,True
+1280083496078360576,2020-07-06 04:00:00,True,True,True,True,False,True,True,True,True,True
+1280084958787317760,2020-07-06 04:00:00,False,False,False,False,False,False,False,False,True,False
+1280085546078011392,2020-07-06 04:00:00,False,False,False,False,False,False,False,False,True,False
+1280094766726856704,2020-07-06 05:00:00,False,False,True,True,False,True,False,False,False,True
+1280151909677088768,2020-07-06 08:00:00,False,False,False,False,False,True,False,False,False,False
+1280179711600218112,2020-07-06 10:00:00,True,True,True,True,True,True,True,True,True,True
+1280181943418654720,2020-07-06 10:00:00,False,False,False,False,False,True,False,False,False,False
+1280182839468843008,2020-07-06 10:00:00,True,False,True,False,False,True,False,False,False,False
+1280190162920710144,2020-07-06 11:00:00,True,True,False,False,True,True,True,True,False,False
+1280196858762219520,2020-07-06 11:00:00,False,False,False,False,False,True,False,False,False,False
+1280207514659930112,2020-07-06 12:00:00,False,True,False,False,False,False,False,True,False,False
+1280218327718285312,2020-07-06 13:00:00,False,False,False,False,False,True,False,False,False,True
+1280250551616315392,2020-07-06 15:00:00,False,False,False,True,False,True,False,False,False,False
+1280271516077305856,2020-07-06 16:00:00,False,False,False,False,False,True,True,False,False,False
+1280273574201307136,2020-07-06 16:00:00,True,True,True,True,False,True,True,True,True,False
+1280273574201307136,2020-07-06 16:00:00,,,,,,,,,,
+1280274201321115648,2020-07-06 16:00:00,True,True,True,True,True,True,True,True,True,True
+1280281603894370304,2020-07-06 17:00:00,True,True,True,False,True,True,True,True,False,False
+1280287725527207936,2020-07-06 17:00:00,False,False,False,False,False,True,False,False,False,False

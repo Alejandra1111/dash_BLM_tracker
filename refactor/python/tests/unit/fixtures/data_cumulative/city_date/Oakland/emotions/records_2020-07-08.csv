@@ -1,0 +1,14 @@
+id,created_at_h,fear,anger,anticip,trust,surprise,positive,negative,sadness,disgust,joy
+1280745289318572032,2020-07-08 00:00:00,False,False,False,False,False,True,False,False,False,True
+1280747579215474688,2020-07-08 00:00:00,False,False,False,False,False,True,False,False,False,True
+1280748106041229312,2020-07-08 00:00:00,True,True,True,True,True,True,True,True,True,True
+1280748106041229312,2020-07-08 00:00:00,,,,,,,,,,
+1280759300634415104,2020-07-08 01:00:00,,,,,,,,,,
+1280764111173947392,2020-07-08 01:00:00,False,False,False,False,False,True,True,False,False,False
+1280779823502123008,2020-07-08 02:00:00,False,False,False,True,False,False,False,False,False,False
+1280975499460849664,2020-07-08 15:00:00,True,True,True,True,True,True,True,True,True,True
+1280975499460849664,2020-07-08 15:00:00,,,,,,,,,,
+1280871887728508928,2020-07-08 08:00:00,True,True,True,True,True,True,True,True,True,True
+1280871887728508928,2020-07-08 08:00:00,,,,,,,,,,
+1281050392374247424,2020-07-08 20:00:00,True,True,True,True,True,True,True,True,True,True
+1281050392374247424,2020-07-08 20:00:00,,,,,,,,,,

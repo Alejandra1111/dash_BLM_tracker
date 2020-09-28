@@ -1,0 +1,3 @@
+# at directory python/  use the following command line: 
+
+python -m unittest discover -s tests/unit -p "test_*.py"
