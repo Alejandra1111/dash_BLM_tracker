@@ -5,12 +5,12 @@ from utilities import time_now_pandas, append_a_content_to_file, \
 from filename_utils import * 
 from newTweetData import *
 
-from globals import data_source, data_dest, current_time, current_time_str, \
-    to_json_args, read_json_args 
+from globals import data_source, data_dest, to_json_args, read_json_args 
 
 
 def process_new_data():
     print(f'\nProcessing new tweet data:{"-"*20}\n')
+    from globals import current_time, current_time_str
 
     append_a_content_to_file(
         content = '\n'+current_time_str,
@@ -97,6 +97,7 @@ def load_and_append_retweet_data(rt):
 
 
 def save_new_data(new_sentiments, new_emotions, new_words, ori):
+    from globals import current_time, current_time_str
     # save new data 
     time_as_filename = 'created_at_' + current_time_str.replace(" ","_")
     new_sentiments.to_csv(f'{data_dest}data_cumulative/sentiments/{time_as_filename}.csv', index=False)

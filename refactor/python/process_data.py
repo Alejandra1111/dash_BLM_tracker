@@ -18,10 +18,10 @@ if __name__=="__main__":
 
     while True: # run continuously until stopped
 
-        # reset_time()
+        reset_time()
         process_new_data()
-        # process_city_date_data()
-        # process_city_date_stats()
+        process_city_date_data()
+        process_city_date_stats()
 
         time.sleep(3600) # 3600 seconds of sleep 
 

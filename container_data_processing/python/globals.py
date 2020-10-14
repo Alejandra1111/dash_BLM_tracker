@@ -2,11 +2,11 @@ from pandas import to_datetime
 from utilities import time_now_pandas
 
 
-data_source = 'tests/unit/fixtures/'
-data_dest = 'tests/unit/fixtures/'
+# data_source = 'tests/unit/fixtures/'
+# data_dest = 'tests/unit/fixtures/'
 
-# data_source = '/data/'
-# data_dest = '/data/app_data/'
+data_source = '/data/'
+data_dest = '/data/app_data/'
 
 current_time = time_now_pandas()
 # !! overwrite time during code dev
@@ -17,7 +17,7 @@ def reset_time():
     global current_time, current_time_str
     current_time = time_now_pandas()
     # !! overwrite time during code dev
-    current_time = to_datetime('2020-07-08 23:59')
+    # current_time = to_datetime('2020-07-08 23:59')
     current_time_str = str(current_time)
     print('current_time:', current_time_str)
 

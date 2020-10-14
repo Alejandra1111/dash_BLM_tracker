@@ -10,11 +10,13 @@ from dataLoader import *
 from tweetRetweetData import *
 from logfile_utils import *
 
-from globals import current_time, current_time_str, data_dest, cities, cities_all, \
+from globals import data_dest, cities, cities_all, \
     read_json_args, json_split, data_types, stat_days_short, stat_days_long
 
 
 def process_city_date_stats():
+    from globals import current_time, current_time_str
+
     print(f'\nProcessing city date stats:{"-"*20}\n')
     data_dest_cd = f'{data_dest}data_cumulative/city_date/'
 
@@ -34,7 +36,7 @@ def process_city_date_stats():
     print('city_date stats updated for: ', logfile_stats.new_records)
 
 
-def create_or_update_city_date_stats(city, data_path, current_time, process_hours=[], verbose=True):
+def create_or_update_city_date_stats(city, data_path, current_time, process_hours=[], verbose=True):    
     if verbose: print(f'\n\n{"-"*15} {city} {"-"*15}:')
 
     stat_sentiments, stat_emotions, stat_words, top_tweets, top_users \

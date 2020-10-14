@@ -5,10 +5,11 @@ from utilities import PlaceHolder
 from filename_utils import *
 from dataProcessorByCityDate import *
 
-from globals import current_time, current_time_str, data_dest,   \
-         cities, city_filterwords, cities_all, days_to_keep, days_to_process
+from globals import data_dest, cities, city_filterwords, cities_all, days_to_keep, days_to_process
 
 def process_city_date_data():
+    from globals import current_time, current_time_str
+
     print(f'\nProcessing city date data:{"-"*20}\n')
 
     datatypes = ['original', 'sentiments', 'emotions', 'words']
@@ -36,6 +37,8 @@ def process_city_date_data():
 
 
 def get_new_data_filenames(datatypes):
+    from globals import current_time, current_time_str
+
     files_retweet = [f'{data_dest}data_cumulative/retweet/2020_all_retweets.json']
 
     all_files = PlaceHolder() 
