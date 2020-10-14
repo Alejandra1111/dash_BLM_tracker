@@ -41,6 +41,7 @@ def create_or_update_city_date_stats(city, data_path, current_time, process_hour
 
     stat_sentiments, stat_emotions, stat_words, top_tweets, top_users \
         = get_city_date_stats(city, current_time, data_path, process_hours)
+    if not len(stat_sentiments): return
 
     city_date_stats_path = f'{data_path}{city}/stats'
     date = str(current_time)[:10]
@@ -104,6 +105,9 @@ def get_city_date_stats(city, datetime, path, process_hours=[]):
     filename_filter_long = DatedFilenameFilter(pd_datetime, days = stat_days_long, no_newer=True)  
 
     data_original = loader.load(dated_files.original, filename_filter_short, **read_json_args, **data_types)
+    if not len(data_original): 
+        return [],[],[],[],[]
+
     data_retweet = DataLoaderJson(**read_json_args).load_data_from_single_file(db_access, dated_files.retweet.files[0])
     data_words = loader.load(dated_files.words, filename_filter_short, **read_json_args, **data_types)
     data_sentiments = loader.load(dated_files.sentiments, filename_filter_long, **data_types)

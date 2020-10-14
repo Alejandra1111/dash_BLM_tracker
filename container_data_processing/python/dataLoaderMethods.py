@@ -9,14 +9,17 @@ from datedFiles import *
 class DataLoaderBase:
     def load_data(self, DataFiles, DataAccess):
         df = []
-        for file, filekey in zip(DataFiles.files, DataFiles.filekeys):
-            filtered_ids = DataFiles.filtered_ids.get(filekey, [])
-            data = self.read_data(self.get_data(DataAccess, file))
-            if len(filtered_ids):
-                data = filter_df_by_id(data, DataFiles.id_varname, filtered_ids)   
-            if len(data):
-                df.append(data)  
-        self.df = pd.concat(df, ignore_index=True) 
+        try:
+            for file, filekey in zip(DataFiles.files, DataFiles.filekeys):
+                filtered_ids = DataFiles.filtered_ids.get(filekey, [])
+                data = self.read_data(self.get_data(DataAccess, file))
+                if len(filtered_ids):
+                    data = filter_df_by_id(data, DataFiles.id_varname, filtered_ids)   
+                if len(data):
+                    df.append(data)  
+            self.df = pd.concat(df, ignore_index=True) 
+        except:
+            self.df = []
 
     def load_data_from_single_file(self, DataAccess, file):
         return self.read_data(self.get_data(DataAccess, file))
@@ -43,7 +46,7 @@ class DataLoaderJson(DataLoaderBase):
 
     def load_data(self, DataFiles, DataAccess):
         super().load_data(DataFiles, DataAccess)
-        convert_floats(self.df, target_dtype=self.float_dtype, 
+        if len(self.df): convert_floats(self.df, target_dtype=self.float_dtype, 
                        exceptions=DataFiles.id_varname)
 
 
